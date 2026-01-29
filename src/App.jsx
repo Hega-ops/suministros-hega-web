@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram } from 'lucide-react';
 
 const SuministrosHega = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Enlace directo a WhatsApp (Formato internacional sin +)
+  const whatsappLink = "https://wa.me/524432496023?text=Hola,%20me%20interesa%20cotizar%20un%20servicio.";
 
   return (
     <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
@@ -10,12 +13,9 @@ const SuministrosHega = () => {
       {/* --- NAVBAR --- */}
       <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* AUMENTADO: Altura del contenedor de h-20 a h-28 */}
           <div className="flex justify-between items-center h-28">
             {/* Logo Section */}
             <div className="flex-shrink-0 flex items-center gap-4 cursor-pointer">
-              {/* LOGO ACTUALIZADO: Usa el nombre original del archivo */}
-              {/* Nota: Aunque está en la carpeta /public, se llama desde la raíz / */}
               <img src="/LOGO SH.png" alt="Suministros Hega" className="h-24 w-auto object-contain" />
               
               <div className="hidden md:block">
@@ -30,9 +30,15 @@ const SuministrosHega = () => {
               <a href="#servicios" className="text-sm font-medium hover:text-cyan-600 transition-colors">Servicios</a>
               <a href="#empresas" className="text-sm font-medium hover:text-cyan-600 transition-colors">Empresas</a>
               <a href="#hogar" className="text-sm font-medium hover:text-cyan-600 transition-colors">Hogar</a>
-              <button className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5">
-                Cotizar Ahora
-              </button>
+              <a 
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2"
+              >
+                <MessageCircle size={16} />
+                Cotizar por WhatsApp
+              </a>
             </div>
 
             {/* Mobile Button */}
@@ -51,9 +57,10 @@ const SuministrosHega = () => {
               <a href="#inicio" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Inicio</a>
               <a href="#servicios" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Servicios</a>
               <a href="#empresas" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Para Empresas</a>
-              <button className="w-full mt-4 bg-slate-900 text-white px-6 py-3 rounded-full font-bold">
-                Contactar
-              </button>
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="w-full mt-4 bg-green-600 text-white px-6 py-3 rounded-full font-bold flex justify-center items-center gap-2">
+                <MessageCircle size={20} />
+                WhatsApp
+              </a>
             </div>
           </div>
         )}
@@ -215,27 +222,40 @@ const SuministrosHega = () => {
             <div>
               <h2 className="text-3xl font-bold mb-6">Hablemos de tus necesidades de impresión</h2>
               <p className="text-slate-400 mb-8 max-w-md">
-                Ya sea que necesites rentar una copiadora para tu oficina o reparar tu impresora personal, estamos listos para ayudarte.
+                Estamos listos para atenderte en nuestras sucursales o vía digital.
               </p>
               
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4">
+              <div className="space-y-6">
+                {/* Teléfonos */}
+                <div className="flex items-start">
+                  <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                     <Phone size={20} className="text-cyan-400" />
                   </div>
-                  <span className="text-lg font-medium">+52 (555) 123-4567</span>
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Morelia</p>
+                    <p className="text-lg font-medium mb-2">(443) 249-6023</p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Moroleón</p>
+                    <p className="text-lg font-medium">(445) 458-1529 <span className="text-slate-500 mx-1">|</span> (445) 457-4955</p>
+                  </div>
                 </div>
+
+                {/* WhatsApp */}
+                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center group cursor-pointer hover:bg-slate-800/50 p-2 rounded-lg -ml-2 transition-colors">
+                  <div className="w-10 h-10 bg-green-900/30 rounded-full flex items-center justify-center mr-4 group-hover:bg-green-600 transition-colors">
+                    <MessageCircle size={20} className="text-green-400 group-hover:text-white" />
+                  </div>
+                  <div>
+                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">WhatsApp</p>
+                     <span className="text-lg font-medium group-hover:text-green-400 transition-colors">(443) 249-6023</span>
+                  </div>
+                </a>
+
+                {/* Email (Se mantiene genérico o puedes actualizarlo si tienes uno específico) */}
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4">
                     <Mail size={20} className="text-cyan-400" />
                   </div>
                   <span className="text-lg font-medium">contacto@suministroshega.com</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4">
-                    <MapPin size={20} className="text-cyan-400" />
-                  </div>
-                  <span className="text-lg font-medium">Morelia, Michoacán (o dirección real)</span>
                 </div>
               </div>
             </div>
@@ -269,9 +289,21 @@ const SuministrosHega = () => {
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-slate-500 text-sm">© 2024 Suministros Hega. Todos los derechos reservados.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-               {/* Social Icons placeholders */}
-               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-cyan-600 transition-colors cursor-pointer"></div>
-               <div className="w-8 h-8 bg-slate-800 rounded-full hover:bg-cyan-600 transition-colors cursor-pointer"></div>
+               {/* Facebook */}
+               <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer">
+                 <div className="w-8 h-8 bg-slate-800 rounded-full group-hover:bg-[#1877F2] group-hover:text-white transition-all flex items-center justify-center">
+                   <Facebook size={16} className="text-slate-400 group-hover:text-white" />
+                 </div>
+                 <span className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">HEGAsuministros</span>
+               </a>
+               
+               {/* Instagram */}
+               <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer">
+                 <div className="w-8 h-8 bg-slate-800 rounded-full group-hover:bg-[#E4405F] group-hover:text-white transition-all flex items-center justify-center">
+                   <Instagram size={16} className="text-slate-400 group-hover:text-white" />
+                 </div>
+                 <span className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">@suministroshega</span>
+               </a>
             </div>
           </div>
         </div>
