@@ -114,19 +114,23 @@ const SuministrosHega = () => {
               Desde la renta de equipos de alto rendimiento para corporativos hasta el tóner que necesitas en casa. Somos tu aliado técnico y logístico.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* BOTÓN EMPRESAS: Ahora es un enlace 'a' que lleva a #empresas */}
+              {/* BOTÓN 1: Renta y Venta (Abre en nueva pestaña) */}
               <a 
                 href="#empresas"
+                target="_blank" 
+                rel="noopener noreferrer"
                 className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-sm md:text-base hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 inline-flex items-center justify-center"
               >
-                Ver Soluciones para Empresas
+                Renta y venta de impresoras
               </a>
-              {/* BOTÓN SUMINISTROS: Ahora es un enlace 'a' que lleva a #hogar (o #servicios) */}
+              {/* BOTÓN 2: Consumibles (Abre en nueva pestaña) */}
               <a 
                 href="#hogar"
+                target="_blank" 
+                rel="noopener noreferrer"
                 className="bg-white text-slate-900 border-2 border-slate-200 px-8 py-4 rounded-full font-bold text-sm md:text-base hover:border-cyan-400 hover:text-cyan-600 transition-all inline-flex items-center justify-center"
               >
-                Busco Suministros / Servicio
+                Consumibles y refacciones
               </a>
             </div>
           </div>
