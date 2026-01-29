@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon } from 'lucide-react';
 
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
+// NOTA: Se agregó el campo 'imagen' a cada equipo.
 const DATA_INICIAL = [
   {
     id: 1,
@@ -15,6 +16,7 @@ const DATA_INICIAL = [
     funciones: "Copia, imprime, escanea",
     incluye: "Tóner, consumibles y refacciones incluidos.",
     popular: true,
+    imagen: "" // Si está vacío, muestra el icono por defecto
   },
   {
     id: 2,
@@ -28,6 +30,7 @@ const DATA_INICIAL = [
     funciones: "Full Dúplex, Red, USB",
     incluye: "Servicio correctivo en < 24hrs.",
     popular: false,
+    imagen: ""
   },
   {
     id: 3,
@@ -41,6 +44,7 @@ const DATA_INICIAL = [
     funciones: "Color de alta calidad",
     incluye: "Consumibles CMYK incluidos.",
     popular: false,
+    imagen: ""
   },
 ];
 
@@ -51,7 +55,7 @@ const PrinterCard = ({ equipo }) => {
   const mensajeInfo = `Hola, necesito más información técnica sobre la *${equipo.modelo}*.`;
 
   return (
-    <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all duration-300 flex flex-col relative group">
+    <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all duration-300 flex flex-col relative group h-full">
       <div className="bg-red-600 text-white text-center py-2 absolute top-0 right-0 left-0 z-10 mx-auto w-3/4 rounded-b-xl shadow-md">
         <p className="text-xs uppercase font-bold opacity-90">Renta Mensual + IVA</p>
         <p className="text-2xl font-extrabold">{equipo.precio}</p>
@@ -68,10 +72,20 @@ const PrinterCard = ({ equipo }) => {
           <h4 className="text-slate-900 text-xl font-extrabold">{equipo.modelo}</h4>
         </div>
 
-        <div className="flex justify-center mb-8 transform group-hover:scale-105 transition-transform duration-500">
-           <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
-             <Printer size={64} />
-           </div>
+        {/* ZONA DE IMAGEN: Si hay ruta de imagen, muestra la foto. Si no, muestra el icono. */}
+        <div className="flex justify-center mb-8 h-48 items-center transform group-hover:scale-105 transition-transform duration-500">
+           {equipo.imagen ? (
+             <img 
+               src={equipo.imagen} 
+               alt={equipo.modelo} 
+               className="h-full w-auto object-contain max-w-full drop-shadow-lg"
+               onError={(e) => {e.target.onerror = null; e.target.src=""}} // Si falla la imagen, no muestra nada roto
+             />
+           ) : (
+             <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
+               <Printer size={64} />
+             </div>
+           )}
         </div>
 
         <div className="space-y-4 mb-6 border-t border-slate-100 pt-6">
@@ -133,7 +147,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   const [generatedCode, setGeneratedCode] = useState('');
 
   const [form, setForm] = useState({
-    paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: ''
+    paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: ''
   });
 
   const handleLogin = (e) => {
@@ -166,7 +180,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     }
     setCatalogo(nuevoCatalogo);
     setEditando(null);
-    setForm({ paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '' });
+    setForm({ paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
   };
 
   const generateCodeBlock = () => {
@@ -219,6 +233,22 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
               {editando ? 'Editar Equipo' : 'Agregar Nuevo Equipo'}
             </h3>
             <div className="space-y-4">
+              {/* CAMPO DE IMAGEN NUEVO */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Imagen (Nombre del archivo)</label>
+                <div className="flex gap-2">
+                  <div className="bg-slate-100 p-2 rounded text-slate-500"><ImageIcon size={20}/></div>
+                  <input 
+                    type="text" 
+                    placeholder="Ej. /m2040.png (Debe estar en carpeta public)" 
+                    className="flex-1 border p-2 rounded text-sm" 
+                    value={form.imagen} 
+                    onChange={e => setForm({...form, imagen: e.target.value})} 
+                  />
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1">Sube la foto a la carpeta 'public' de tu proyecto primero.</p>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <input type="text" placeholder="Marca (ej. Kyocera)" className="border p-2 rounded" value={form.marca} onChange={e => setForm({...form, marca: e.target.value})} />
                 <input type="text" placeholder="Modelo (ej. Ecosys M2040)" className="border p-2 rounded" value={form.modelo} onChange={e => setForm({...form, modelo: e.target.value})} />
@@ -236,7 +266,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
               </div>
               <input type="text" placeholder="¿Qué incluye?" className="w-full border p-2 rounded" value={form.incluye} onChange={e => setForm({...form, incluye: e.target.value})} />
               <div className="flex gap-2 mt-4">
-                {editando && <button onClick={() => {setEditando(null); setForm({ paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '' });}} className="px-4 py-2 bg-gray-200 rounded font-bold">Cancelar</button>}
+                {editando && <button onClick={() => {setEditando(null); setForm({ paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });}} className="px-4 py-2 bg-gray-200 rounded font-bold">Cancelar</button>}
                 <button onClick={handleSave} className="flex-1 bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700 transition-colors">{editando ? 'Actualizar Equipo' : 'Guardar Nuevo Equipo'}</button>
               </div>
             </div>
@@ -247,9 +277,15 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
             <div className="max-h-[500px] overflow-y-auto space-y-3 pr-2">
               {catalogo.map(item => (
                 <div key={item.id} className="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-center shadow-sm">
-                  <div>
-                    <p className="font-bold text-slate-800">{item.modelo}</p>
-                    <p className="text-xs text-slate-500">{item.paquete} - <span className="text-green-600 font-bold">{item.precio}</span></p>
+                  <div className="flex items-center gap-3">
+                    {/* Miniatura de la imagen */}
+                    <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center overflow-hidden">
+                      {item.imagen ? <img src={item.imagen} alt="" className="w-full h-full object-cover"/> : <Printer size={16} className="text-slate-400"/>}
+                    </div>
+                    <div>
+                      <p className="font-bold text-slate-800">{item.modelo}</p>
+                      <p className="text-xs text-slate-500">{item.paquete} - <span className="text-green-600 font-bold">{item.precio}</span></p>
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => handleEdit(item)} className="p-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200"><Edit size={18}/></button>
@@ -662,8 +698,8 @@ const SuministrosHega = () => {
             <div className="flex space-x-6 mt-4 md:mt-0 items-center">
                <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Facebook size={20} /> HEGAsuministros</a>
                <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Instagram size={20} /> @suministroshega</a>
-               {/* BOTÓN STAFF VISIBLE PARA ENTRAR AL ADMIN */}
-               <button onClick={() => setShowAdmin(true)} className="ml-4 text-slate-500 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs font-bold" title="Acceso Administrativo">
+               {/* BOTÓN STAFF VISIBLE */}
+               <button onClick={() => setShowAdmin(true)} className="ml-4 text-slate-500 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs font-bold cursor-pointer" title="Acceso Administrativo">
                  <Lock size={14} /> Staff
                </button>
             </div>
