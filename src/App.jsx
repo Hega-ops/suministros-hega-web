@@ -4,8 +4,38 @@ import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Ma
 const SuministrosHega = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Enlace directo a WhatsApp (Actualizado a terminación 6023 -> 279-6023)
-  const whatsappLink = "https://wa.me/524432796023?text=Hola,%20me%20interesa%20cotizar%20un%20servicio.";
+  // Estado para guardar los datos del formulario
+  const [formData, setFormData] = useState({
+    nombre: '',
+    telefono: '',
+    servicio: 'Renta de equipos (Empresas)',
+    mensaje: ''
+  });
+
+  // Enlace directo a WhatsApp (Número actualizado: 443 279 6023)
+  const whatsappNumber = "524432796023";
+  const whatsappLinkGenerico = `https://wa.me/${whatsappNumber}?text=Hola,%20me%20interesa%20cotizar%20un%20servicio.`;
+
+  // Función para manejar cambios en los inputs
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Función para enviar el formulario a WhatsApp
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { nombre, telefono, servicio, mensaje } = formData;
+    
+    // Construimos el mensaje formateado
+    const text = `Hola Suministros Hega, mi nombre es *${nombre}*.%0A%0AMe interesa: *${servicio}*%0A${telefono ? `Mi teléfono es: ${telefono}%0A` : ''}${mensaje ? `Mensaje: ${mensaje}` : ''}`;
+    
+    // Abrimos WhatsApp con el mensaje
+    window.open(`https://wa.me/${whatsappNumber}?text=${text}`, '_blank');
+  };
 
   return (
     <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
@@ -31,7 +61,7 @@ const SuministrosHega = () => {
               <a href="#empresas" className="text-sm font-medium hover:text-cyan-600 transition-colors">Empresas</a>
               <a href="#hogar" className="text-sm font-medium hover:text-cyan-600 transition-colors">Hogar</a>
               <a 
-                href={whatsappLink}
+                href={whatsappLinkGenerico}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2"
@@ -57,7 +87,7 @@ const SuministrosHega = () => {
               <a href="#inicio" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Inicio</a>
               <a href="#servicios" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Servicios</a>
               <a href="#empresas" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Para Empresas</a>
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="w-full mt-4 bg-green-600 text-white px-6 py-3 rounded-full font-bold flex justify-center items-center gap-2">
+              <a href={whatsappLinkGenerico} target="_blank" rel="noopener noreferrer" className="w-full mt-4 bg-green-600 text-white px-6 py-3 rounded-full font-bold flex justify-center items-center gap-2">
                 <MessageCircle size={20} />
                 WhatsApp
               </a>
@@ -233,56 +263,93 @@ const SuministrosHega = () => {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Morelia</p>
-                    <p className="text-lg font-medium mb-2">(443) 249-6023</p>
+                    <p className="text-lg font-medium mb-2">(443) 279-6023</p>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Moroleón</p>
                     <p className="text-lg font-medium">(445) 458-1529 <span className="text-slate-500 mx-1">|</span> (445) 457-4955</p>
                   </div>
                 </div>
 
                 {/* WhatsApp */}
-                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center group cursor-pointer hover:bg-slate-800/50 p-2 rounded-lg -ml-2 transition-colors">
+                <a href={whatsappLinkGenerico} target="_blank" rel="noopener noreferrer" className="flex items-center group cursor-pointer hover:bg-slate-800/50 p-2 rounded-lg -ml-2 transition-colors">
                   <div className="w-10 h-10 bg-green-900/30 rounded-full flex items-center justify-center mr-4 group-hover:bg-green-600 transition-colors">
                     <MessageCircle size={20} className="text-green-400 group-hover:text-white" />
                   </div>
                   <div>
                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">WhatsApp</p>
-                     {/* UPDATE: Número actualizado a 279-6023 */}
                      <span className="text-lg font-medium group-hover:text-green-400 transition-colors">(443) 279-6023</span>
                   </div>
                 </a>
 
-                {/* Email (Se mantiene genérico o puedes actualizarlo si tienes uno específico) */}
+                {/* Email */}
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4">
                     <Mail size={20} className="text-cyan-400" />
                   </div>
-                  {/* UPDATE: Corrección a .mx */}
                   <span className="text-lg font-medium">contacto@suministroshega.mx</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 text-slate-900">
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
-                  <input type="text" className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all" placeholder="Tu nombre o empresa" />
+            {/* --- FORMULARIO ACTIVO --- */}
+            <div className="bg-white rounded-2xl p-8 text-slate-900 shadow-2xl shadow-black/20">
+              <h3 className="text-2xl font-bold mb-6">Envíanos un mensaje</h3>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid md:grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nombre</label>
+                    <input 
+                      type="text" 
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all font-medium" 
+                      placeholder="Tu nombre" 
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Teléfono</label>
+                    <input 
+                      type="tel" 
+                      name="telefono"
+                      value={formData.telefono}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all font-medium" 
+                      placeholder="Opcional" 
+                    />
+                  </div>
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Servicio de interés</label>
-                  <select className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-cyan-500 outline-none bg-white">
-                    <option>Renta de equipos (Empresas)</option>
-                    <option>Compra de suministros</option>
-                    <option>Servicio Técnico</option>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Me interesa</label>
+                  <select 
+                    name="servicio"
+                    value={formData.servicio}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium cursor-pointer"
+                  >
+                    <option>Renta de Equipos (Empresa)</option>
+                    <option>Comprar Cartuchos / Tóner</option>
+                    <option>Solicitar Servicio Técnico</option>
                     <option>Otro</option>
                   </select>
                 </div>
+                
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Mensaje</label>
-                  <textarea className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all h-32" placeholder="¿En qué podemos ayudarte?"></textarea>
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mensaje</label>
+                  <textarea 
+                    name="mensaje"
+                    value={formData.mensaje}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all h-28 font-medium resize-none" 
+                    placeholder="Cuéntanos más detalles..."
+                    required
+                  ></textarea>
                 </div>
-                <button className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-lg transition-colors shadow-lg shadow-cyan-500/30">
-                  Enviar Mensaje
+                
+                <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:-translate-y-1 flex items-center justify-center gap-2">
+                  <MessageCircle size={20} />
+                  Enviar a WhatsApp
                 </button>
               </form>
             </div>
@@ -313,7 +380,7 @@ const SuministrosHega = () => {
       
       {/* --- BOTÓN FLOTANTE WHATSAPP --- */}
       <a
-        href={whatsappLink}
+        href={whatsappLinkGenerico}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all transform hover:scale-110 hover:-translate-y-1 flex items-center justify-center"
