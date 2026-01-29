@@ -16,7 +16,7 @@ const DATA_INICIAL = [
     "funciones": "Copia, imprime, escanea",
     "incluye": "Tóner, consumibles y refacciones incluidos.",
     "popular": true,
-    "imagen": "/M4080.PNG"
+    "imagen": "/M4080.png"
   },
   {
     "id": 2,
