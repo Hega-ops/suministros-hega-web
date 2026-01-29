@@ -662,9 +662,9 @@ const SuministrosHega = () => {
             <div className="flex space-x-6 mt-4 md:mt-0 items-center">
                <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Facebook size={20} /> HEGAsuministros</a>
                <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Instagram size={20} /> @suministroshega</a>
-               {/* BOTÓN STAFF OCULTO PARA ENTRAR AL ADMIN */}
-               <button onClick={() => setShowAdmin(true)} className="ml-4 text-slate-800 hover:text-slate-600 transition-colors flex items-center gap-1 opacity-50 hover:opacity-100" title="Acceso Administrativo">
-                 <Lock size={12} />
+               {/* BOTÓN STAFF VISIBLE PARA ENTRAR AL ADMIN */}
+               <button onClick={() => setShowAdmin(true)} className="ml-4 text-slate-500 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs font-bold" title="Acceso Administrativo">
+                 <Lock size={14} /> Staff
                </button>
             </div>
           </div>
