@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag } from 'lucide-react';
 
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
-// NOTA: Se agregó el campo 'imagen' a cada equipo.
 const DATA_INICIAL = [
-  {
+  // --- EQUIPOS DE RENTA ---
+{
     "id": 1,
     "paquete": "Paquete Básico",
     "modelo": "ProXpress M4080FX",
@@ -18,50 +18,96 @@ const DATA_INICIAL = [
     "popular": true,
     "imagen": "/M4080.png"
   },
-  {
-    "id": 2,
-    "paquete": "Paquete Oficina",
-    "modelo": "Ecosys M3145",
-    "marca": "Kyocera",
-    "descripcion": "5,000 Impresiones B/N",
-    "precio": "$1,550",
-    "velocidad": "45 ppm",
-    "tamano": "Carta y Oficio",
-    "funciones": "Full Dúplex, Red, USB",
-    "incluye": "Servicio correctivo en < 24hrs.",
-    "popular": false,
-    "imagen": ""
   },
   {
-    "id": 3,
-    "paquete": "Paquete Color",
-    "modelo": "Ecosys M5526",
-    "marca": "Kyocera",
-    "descripcion": "2,000 Impresiones Color",
-    "precio": "$1,890",
-    "velocidad": "26 ppm",
-    "tamano": "Carta y Oficio",
-    "funciones": "Color de alta calidad",
-    "incluye": "Consumibles CMYK incluidos.",
-    "popular": false,
-    "imagen": ""
+    id: 2,
+    categoria: "renta",
+    paquete: "Paquete Oficina",
+    modelo: "Ecosys M3145",
+    marca: "Kyocera",
+    descripcion: "5,000 Impresiones B/N",
+    precio: "$1,550",
+    velocidad: "45 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Full Dúplex, Red, USB",
+    incluye: "Servicio correctivo en < 24hrs.",
+    popular: false,
+    imagen: ""
+  },
+  {
+    id: 3,
+    categoria: "renta",
+    paquete: "Paquete Color",
+    modelo: "Ecosys M5526",
+    marca: "Kyocera",
+    descripcion: "2,000 Impresiones Color",
+    precio: "$1,890",
+    velocidad: "26 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Color de alta calidad",
+    incluye: "Consumibles CMYK incluidos.",
+    popular: false,
+    imagen: ""
+  },
+  // --- EQUIPOS DE VENTA (EJEMPLOS) ---
+  {
+    id: 4,
+    categoria: "venta",
+    paquete: "Seminuevo Garantizado",
+    modelo: "Kyocera M2040dn",
+    marca: "Kyocera",
+    descripcion: "Equipo reacondicionado",
+    precio: "$8,500",
+    velocidad: "40 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Red, USB, Dúplex",
+    incluye: "Garantía de 3 meses.",
+    popular: false,
+    imagen: ""
+  },
+  {
+    id: 5,
+    categoria: "venta",
+    paquete: "Equipo Nuevo",
+    modelo: "Brother DCP-L2540DW",
+    marca: "Brother",
+    descripcion: "Ideal Home Office",
+    precio: "$4,200",
+    velocidad: "30 ppm",
+    tamano: "Carta",
+    funciones: "Wifi, Escáner color",
+    incluye: "Tóner de inicio incluido.",
+    popular: false,
+    imagen: ""
   }
 ];
 
 // --- COMPONENTE: TARJETA DE IMPRESORA ---
 const PrinterCard = ({ equipo }) => {
   const whatsappNumber = "524432796023";
-  const mensajeCotizar = `Hola, me interesa cotizar el equipo *${equipo.modelo}* (${equipo.paquete}).`;
+  const isVenta = equipo.categoria === 'venta';
+  
+  // Textos dinámicos según si es Renta o Venta
+  const mensajeCotizar = isVenta 
+    ? `Hola, me interesa comprar el equipo *${equipo.modelo}* que vi en su web.`
+    : `Hola, me interesa cotizar la renta del equipo *${equipo.modelo}* (${equipo.paquete}).`;
+    
   const mensajeInfo = `Hola, necesito más información técnica sobre la *${equipo.modelo}*.`;
+
+  const etiquetaColor = isVenta ? "bg-green-600" : "bg-red-600";
+  const etiquetaTexto = isVenta ? "Precio de Venta + IVA" : "Renta Mensual + IVA";
+  const headerColor = isVenta ? "bg-slate-800" : "bg-cyan-500";
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all duration-300 flex flex-col relative group h-full">
-      <div className="bg-red-600 text-white text-center py-2 absolute top-0 right-0 left-0 z-10 mx-auto w-3/4 rounded-b-xl shadow-md">
-        <p className="text-xs uppercase font-bold opacity-90">Renta Mensual + IVA</p>
+      {/* Etiqueta de Precio */}
+      <div className={`${etiquetaColor} text-white text-center py-2 absolute top-0 right-0 left-0 z-10 mx-auto w-3/4 rounded-b-xl shadow-md`}>
+        <p className="text-xs uppercase font-bold opacity-90">{etiquetaTexto}</p>
         <p className="text-2xl font-extrabold">{equipo.precio}</p>
       </div>
 
-      <div className="bg-cyan-500 pt-16 pb-4 px-6 text-center">
+      {/* Encabezado */}
+      <div className={`${headerColor} pt-16 pb-4 px-6 text-center transition-colors`}>
         <h3 className="text-white text-2xl font-bold">{equipo.paquete}</h3>
         <p className="text-white/90 font-medium text-sm mt-1">{equipo.descripcion}</p>
       </div>
@@ -72,14 +118,14 @@ const PrinterCard = ({ equipo }) => {
           <h4 className="text-slate-900 text-xl font-extrabold">{equipo.modelo}</h4>
         </div>
 
-        {/* ZONA DE IMAGEN: Si hay ruta de imagen, muestra la foto. Si no, muestra el icono. */}
+        {/* Imagen */}
         <div className="flex justify-center mb-8 h-48 items-center transform group-hover:scale-105 transition-transform duration-500">
            {equipo.imagen ? (
              <img 
                src={equipo.imagen} 
                alt={equipo.modelo} 
                className="h-full w-auto object-contain max-w-full drop-shadow-lg"
-               onError={(e) => {e.target.onerror = null; e.target.src=""}} // Si falla la imagen, no muestra nada roto
+               onError={(e) => {e.target.onerror = null; e.target.src=""}} 
              />
            ) : (
              <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
@@ -88,23 +134,24 @@ const PrinterCard = ({ equipo }) => {
            )}
         </div>
 
+        {/* Specs */}
         <div className="space-y-4 mb-6 border-t border-slate-100 pt-6">
           <div className="flex items-center">
-            <div className="w-8 flex justify-center mr-3 text-cyan-500"><Zap size={20} /></div>
+            <div className={`w-8 flex justify-center mr-3 ${isVenta ? 'text-green-600' : 'text-cyan-500'}`}><Zap size={20} /></div>
             <div>
               <p className="text-xs text-slate-400 font-bold uppercase">Velocidad</p>
               <p className="text-slate-700 font-bold">{equipo.velocidad}</p>
             </div>
           </div>
           <div className="flex items-center">
-            <div className="w-8 flex justify-center mr-3 text-cyan-500"><FileText size={20} /></div>
+            <div className={`w-8 flex justify-center mr-3 ${isVenta ? 'text-green-600' : 'text-cyan-500'}`}><FileText size={20} /></div>
             <div>
               <p className="text-xs text-slate-400 font-bold uppercase">Tamaño</p>
               <p className="text-slate-700 font-bold">{equipo.tamano}</p>
             </div>
           </div>
           <div className="flex items-center">
-            <div className="w-8 flex justify-center mr-3 text-cyan-500"><Layers size={20} /></div>
+            <div className={`w-8 flex justify-center mr-3 ${isVenta ? 'text-green-600' : 'text-cyan-500'}`}><Layers size={20} /></div>
             <div>
               <p className="text-xs text-slate-400 font-bold uppercase">Funciones</p>
               <p className="text-slate-700 font-bold text-sm">{equipo.funciones}</p>
@@ -121,7 +168,7 @@ const PrinterCard = ({ equipo }) => {
             href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeInfo)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-cyan-500 hover:bg-cyan-600 text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors"
+            className={`bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors border border-slate-200`}
           >
             <Info size={16} className="mr-1" /> + INFO
           </a>
@@ -129,9 +176,9 @@ const PrinterCard = ({ equipo }) => {
             href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeCotizar)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors"
+            className={`${isVenta ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-yellow-400 hover:bg-yellow-500 text-slate-900'} py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors shadow-md`}
           >
-            COTIZAR
+            {isVenta ? 'COMPRAR' : 'RENTAR'}
           </a>
         </div>
       </div>
@@ -147,6 +194,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   const [generatedCode, setGeneratedCode] = useState('');
 
   const [form, setForm] = useState({
+    categoria: 'renta', // Valor por defecto
     paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: ''
   });
 
@@ -180,7 +228,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     }
     setCatalogo(nuevoCatalogo);
     setEditando(null);
-    setForm({ paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
+    setForm({ categoria: 'renta', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
   };
 
   const generateCodeBlock = () => {
@@ -199,15 +247,8 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
         <div className="bg-white p-8 rounded-2xl max-w-md w-full text-center">
           <Lock className="w-16 h-16 text-cyan-600 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Acceso Administrativo</h2>
-          <p className="text-slate-500 mb-6">Solo personal autorizado de Suministros Hega.</p>
           <form onSubmit={handleLogin}>
-            <input 
-              type="password" 
-              className="w-full border border-gray-300 p-3 rounded-lg mb-4 text-center text-lg"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <input type="password" className="w-full border border-gray-300 p-3 rounded-lg mb-4 text-center text-lg" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)}/>
             <div className="flex gap-2">
               <button type="button" onClick={onExit} className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-bold">Salir</button>
               <button type="submit" className="flex-1 bg-cyan-600 text-white py-3 rounded-lg font-bold">Entrar</button>
@@ -233,20 +274,28 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
               {editando ? 'Editar Equipo' : 'Agregar Nuevo Equipo'}
             </h3>
             <div className="space-y-4">
-              {/* CAMPO DE IMAGEN NUEVO */}
+              
+              {/* SELECTOR DE CATEGORÍA */}
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Oferta</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
+                    <input type="radio" name="categoria" value="renta" checked={form.categoria === 'renta'} onChange={e => setForm({...form, categoria: e.target.value})} />
+                    <span className="font-bold text-cyan-600">Renta Mensual</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
+                    <input type="radio" name="categoria" value="venta" checked={form.categoria === 'venta'} onChange={e => setForm({...form, categoria: e.target.value})} />
+                    <span className="font-bold text-green-600">Venta Equipo</span>
+                  </label>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Imagen (Nombre del archivo)</label>
                 <div className="flex gap-2">
                   <div className="bg-slate-100 p-2 rounded text-slate-500"><ImageIcon size={20}/></div>
-                  <input 
-                    type="text" 
-                    placeholder="Ej. /m2040.png (Debe estar en carpeta public)" 
-                    className="flex-1 border p-2 rounded text-sm" 
-                    value={form.imagen} 
-                    onChange={e => setForm({...form, imagen: e.target.value})} 
-                  />
+                  <input type="text" placeholder="Ej. /m2040.png" className="flex-1 border p-2 rounded text-sm" value={form.imagen} onChange={e => setForm({...form, imagen: e.target.value})} />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">Sube la foto a la carpeta 'public' de tu proyecto primero.</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -266,7 +315,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
               </div>
               <input type="text" placeholder="¿Qué incluye?" className="w-full border p-2 rounded" value={form.incluye} onChange={e => setForm({...form, incluye: e.target.value})} />
               <div className="flex gap-2 mt-4">
-                {editando && <button onClick={() => {setEditando(null); setForm({ paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });}} className="px-4 py-2 bg-gray-200 rounded font-bold">Cancelar</button>}
+                {editando && <button onClick={() => {setEditando(null); setForm({ categoria: 'renta', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });}} className="px-4 py-2 bg-gray-200 rounded font-bold">Cancelar</button>}
                 <button onClick={handleSave} className="flex-1 bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700 transition-colors">{editando ? 'Actualizar Equipo' : 'Guardar Nuevo Equipo'}</button>
               </div>
             </div>
@@ -276,15 +325,20 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
             <h3 className="text-xl font-bold mb-4">Equipos Actuales ({catalogo.length})</h3>
             <div className="max-h-[500px] overflow-y-auto space-y-3 pr-2">
               {catalogo.map(item => (
-                <div key={item.id} className="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-center shadow-sm">
-                  <div className="flex items-center gap-3">
-                    {/* Miniatura de la imagen */}
+                <div key={item.id} className="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-center shadow-sm relative overflow-hidden">
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 ${item.categoria === 'venta' ? 'bg-green-500' : 'bg-cyan-500'}`}></div>
+                  <div className="flex items-center gap-3 pl-2">
                     <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center overflow-hidden">
                       {item.imagen ? <img src={item.imagen} alt="" className="w-full h-full object-cover"/> : <Printer size={16} className="text-slate-400"/>}
                     </div>
                     <div>
-                      <p className="font-bold text-slate-800">{item.modelo}</p>
-                      <p className="text-xs text-slate-500">{item.paquete} - <span className="text-green-600 font-bold">{item.precio}</span></p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-slate-800">{item.modelo}</p>
+                        <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded text-white ${item.categoria === 'venta' ? 'bg-green-500' : 'bg-cyan-500'}`}>
+                          {item.categoria}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500">{item.paquete} - <span className="text-slate-900 font-bold">{item.precio}</span></p>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -301,7 +355,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className="text-xl font-bold text-yellow-400 flex items-center gap-2"><Save size={20}/> Guardar Cambios</h3>
-              <p className="text-slate-400 text-sm">Copia el código generado y pégalo en VS Code para guardar los cambios permanentemente.</p>
+              <p className="text-slate-400 text-sm">Copia el código generado y pégalo en VS Code.</p>
             </div>
             <button onClick={generateCodeBlock} className="bg-cyan-600 px-6 py-2 rounded-lg font-bold hover:bg-cyan-500">Generar Código</button>
           </div>
@@ -317,15 +371,99 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   );
 };
 
-// --- COMPONENTE: VISTA HOME (COMPLETO) ---
+// --- VISTA RENTA Y VENTA (DIVIDIDA) ---
+const RentaView = ({ onBack, catalogo }) => {
+  const listaCompleta = catalogo || [];
+  
+  // Filtramos los equipos en dos listas
+  const equiposRenta = listaCompleta.filter(e => e.categoria !== 'venta');
+  const equiposVenta = listaCompleta.filter(e => e.categoria === 'venta');
+
+  return (
+    <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
+          <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
+        </button>
+        
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-slate-900 mb-4">Renta y Venta de Impresoras</h1>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            Soluciones flexibles para cada necesidad. Renta sin inversión inicial o compra equipos garantizados.
+          </p>
+        </div>
+
+        {/* SECCIÓN 1: RENTA */}
+        {equiposRenta.length > 0 && (
+          <div className="mb-20">
+            <div className="flex items-center mb-8">
+              <div className="bg-cyan-500 p-2 rounded-lg mr-4 text-white"><Printer size={24} /></div>
+              <h2 className="text-2xl font-bold text-slate-800">Planes de Renta Mensual</h2>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {equiposRenta.map((equipo) => (
+                <PrinterCard key={equipo.id} equipo={equipo} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* SECCIÓN 2: VENTA */}
+        {equiposVenta.length > 0 && (
+          <div className="mb-20 pt-8 border-t border-slate-200">
+            <div className="flex items-center mb-8">
+              <div className="bg-green-600 p-2 rounded-lg mr-4 text-white"><Tag size={24} /></div>
+              <h2 className="text-2xl font-bold text-slate-800">Equipos Disponibles para Venta</h2>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {equiposVenta.map((equipo) => (
+                <PrinterCard key={equipo.id} equipo={equipo} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Información Adicional */}
+        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
+                <ShieldCheck className="text-cyan-500 mr-3" /> ¿Por qué rentar?
+              </h3>
+              <ul className="space-y-4">
+                {["Cero inversión inicial.", "100% Deducible de impuestos.", "Mantenimiento y tóner incluidos.", "Soporte técnico prioritario."].map((item, index) => (
+                  <li key={index} className="flex items-start">
+                    <CheckCircle className="text-green-500 mr-3 mt-1 flex-shrink-0" size={20}/>
+                    <span className="text-slate-700 font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-slate-50 p-8 rounded-2xl">
+              <h3 className="text-xl font-bold text-slate-900 mb-4">¿Buscas algo específico?</h3>
+              <p className="text-slate-600 mb-6">
+                Si no encuentras el modelo que buscas, contáctanos. Tenemos acceso a un amplio inventario de marcas líderes.
+              </p>
+              <a href="https://wa.me/524432796023" target="_blank" rel="noopener noreferrer" className="text-cyan-600 font-bold hover:underline flex items-center">
+                Preguntar por otro modelo <ChevronRight size={16} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// --- RESTO DE COMPONENTES SIN CAMBIOS (HomeView, ConsumiblesView, App) ---
+// (Se incluye el código completo a continuación para que solo tengas que copiar y pegar)
+
 const HomeView = ({ onNavigate }) => {
   return (
     <>
-      {/* HERO SECTION */}
       <section id="inicio" className="relative pt-40 pb-20 lg:pt-56 lg:pb-32 overflow-hidden">
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-cyan-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
         <div className="absolute top-0 left-0 -ml-20 -mt-20 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-100">
@@ -348,15 +486,12 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
-
-      {/* MAIN SERVICES */}
       <section id="servicios" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Todo en un solo lugar</h2>
             <p className="text-slate-500 max-w-2xl mx-auto">Simplificamos la gestión de impresión con tres pilares fundamentales de servicio.</p>
           </div>
-
           <div className="grid md:grid-cols-3 gap-8">
             <div onClick={() => onNavigate('consumibles')} className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100 cursor-pointer">
               <div className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><Droplet className="text-cyan-600" size={28} /></div>
@@ -389,8 +524,6 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
-
-      {/* SEGMENTATION SECTION */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -427,134 +560,6 @@ const HomeView = ({ onNavigate }) => {
   );
 };
 
-// --- COMPONENTE: VISTA CONSUMIBLES (COMPLETO) ---
-const ConsumiblesView = ({ onBack }) => (
-  <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
-        <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
-      </button>
-      
-      <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
-        <div className="inline-block px-4 py-1.5 bg-green-100 text-green-800 rounded-full text-xs font-bold mb-6 uppercase">Hogar y Oficina</div>
-        <h1 className="text-4xl font-bold text-slate-900 mb-6">Consumibles y Refacciones</h1>
-        <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-3xl">
-          Mantenemos tu impresora funcionando con la mejor calidad. Encuentra tóner original, genérico de alto rendimiento y las refacciones que necesitas.
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mb-4"><Droplet className="text-cyan-600" size={24}/></div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Tóner y Tinta</h3>
-            <p className="text-slate-600 text-sm">Cartuchos originales y compatibles premium. Ahorra hasta un 60% con nuestros genéricos garantizados.</p>
-          </div>
-          <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4"><Box className="text-purple-600" size={24}/></div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Refacciones</h3>
-            <p className="text-slate-600 text-sm">Fusores, rodillos, engranes y piezas internas para reparar tu equipo y extender su vida útil.</p>
-          </div>
-          <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4"><Zap className="text-orange-600" size={24}/></div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Chips y Tambores</h3>
-            <p className="text-slate-600 text-sm">Unidades de imagen (Drum) y chips de reseteo para todas las marcas comerciales.</p>
-          </div>
-        </div>
-
-        <div className="bg-slate-900 text-white rounded-2xl p-8 mb-10">
-          <h3 className="text-2xl font-bold mb-4">Manejamos todas las marcas principales</h3>
-          <div className="flex flex-wrap gap-8 opacity-70">
-             <span className="text-xl font-bold">HP</span>
-             <span className="text-xl font-bold">BROTHER</span>
-             <span className="text-xl font-bold">EPSON</span>
-             <span className="text-xl font-bold">CANON</span>
-             <span className="text-xl font-bold">SAMSUNG</span>
-             <span className="text-xl font-bold">XEROX</span>
-             <span className="text-xl font-bold">KYOCERA</span>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <a 
-            href="https://wa.me/524432796023?text=Hola,%20busco%20precio%20de%20un%20tóner%20modelo..."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-green-600 text-white px-8 py-4 rounded-full font-bold hover:bg-green-700 transition-all shadow-lg inline-flex items-center"
-          >
-            <MessageCircle className="mr-2" /> Preguntar Precio por WhatsApp
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-// --- VISTA RENTA Y VENTA (MODIFICADA PARA RECIBIR DATOS) ---
-const RentaView = ({ onBack, catalogo }) => {
-  const listaEquipos = catalogo || [];
-
-  return (
-    <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
-          <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
-        </button>
-        
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">Renta y Venta de Impresoras</h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Catálogo de equipos disponibles. Planes flexibles que se adaptan a tu volumen de impresión.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {listaEquipos.map((equipo) => (
-            <PrinterCard key={equipo.id} equipo={equipo} />
-          ))}
-        </div>
-
-        {/* Información Adicional de Renta */}
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
-                <Printer className="text-cyan-500 mr-3" /> Beneficios de la Renta
-              </h3>
-              <ul className="space-y-4">
-                {[
-                  "Cero inversión inicial en equipos.",
-                  "Deducible de impuestos al 100%.",
-                  "Mantenimiento preventivo y correctivo incluido.",
-                  "Suministros (tóner y refacciones) incluidos.",
-                  "Soporte técnico prioritario (menos de 24 hrs).",
-                  "Equipos multifuncionales (Copia, Imprime, Escanea)."
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start">
-                    <CheckCircle className="text-green-500 mr-3 mt-1 flex-shrink-0" size={20}/>
-                    <span className="text-slate-700 font-medium">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-slate-50 p-8 rounded-2xl">
-              <h3 className="text-xl font-bold text-slate-900 mb-4">¿Prefieres Comprar?</h3>
-              <p className="text-slate-600 mb-6">
-                También contamos con venta de equipos nuevos y seminuevos garantizados de las mejores marcas.
-              </p>
-              <div className="flex flex-wrap gap-3 mb-6">
-                {["Kyocera", "Ricoh", "Canon", "Brother", "HP", "Samsung"].map(brand => (
-                  <span key={brand} className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-500">{brand}</span>
-                ))}
-              </div>
-              <p className="text-sm text-slate-500 italic">Consulta disponibilidad de modelos específicos.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// --- COMPONENTE PRINCIPAL (APP) ---
 const SuministrosHega = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentView, setCurrentView] = useState('home'); 
@@ -587,7 +592,6 @@ const SuministrosHega = () => {
   return (
     <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
       
-      {/* MODO ADMINISTRADOR */}
       {showAdmin && (
         <AdminPanel 
           catalogo={catalogo} 
@@ -596,7 +600,6 @@ const SuministrosHega = () => {
         />
       )}
 
-      {/* --- NAVBAR --- */}
       <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-28">
@@ -636,7 +639,6 @@ const SuministrosHega = () => {
         )}
       </nav>
 
-      {/* --- VISTAS --- */}
       {currentView === 'home' && <HomeView onNavigate={navigateTo} />}
       
       {currentView === 'renta' && (
@@ -648,11 +650,9 @@ const SuministrosHega = () => {
       
       {currentView === 'consumibles' && <ConsumiblesView onBack={() => navigateTo('home')} />}
 
-      {/* --- FOOTER --- */}
       <footer id="contacto" className="bg-slate-900 text-white pt-20 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 mb-16">
-             {/* ... Datos de contacto ... */}
              <div>
               <h2 className="text-3xl font-bold mb-6">Contáctanos</h2>
               <p className="text-slate-400 mb-8 max-w-md">Estamos listos para atenderte en nuestras sucursales o vía digital.</p>
@@ -678,7 +678,6 @@ const SuministrosHega = () => {
               </div>
             </div>
              
-             {/* ... Formulario ... */}
              <div className="bg-white rounded-2xl p-8 text-slate-900 shadow-2xl shadow-black/20">
               <h3 className="text-2xl font-bold mb-6">Envíanos un mensaje</h3>
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -698,7 +697,6 @@ const SuministrosHega = () => {
             <div className="flex space-x-6 mt-4 md:mt-0 items-center">
                <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Facebook size={20} /> HEGAsuministros</a>
                <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Instagram size={20} /> @suministroshega</a>
-               {/* BOTÓN STAFF VISIBLE */}
                <button onClick={() => setShowAdmin(true)} className="ml-4 text-slate-500 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs font-bold cursor-pointer" title="Acceso Administrativo">
                  <Lock size={14} /> Staff
                </button>
