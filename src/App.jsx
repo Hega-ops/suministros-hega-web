@@ -1,5 +1,140 @@
 import React, { useState } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info } from 'lucide-react';
+
+// --- CONFIGURACIÓN: LISTA DE IMPRESORAS (CATÁLOGO) ---
+// AQUÍ ES DONDE PUEDES AGREGAR, EDITAR O BORRAR EQUIPOS
+const catalogoEquipos = [
+  {
+    id: 1,
+    paquete: "Paquete Básico",
+    modelo: "Ecosys M2040",
+    marca: "Kyocera",
+    descripcion: "3,000 Impresiones B/N",
+    precio: "$1,245",
+    velocidad: "42 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Copia, imprime, escanea",
+    incluye: "Tóner, consumibles y refacciones incluidos.",
+    popular: true, // Poner en true para resaltar
+  },
+  {
+    id: 2,
+    paquete: "Paquete Oficina",
+    modelo: "Ecosys M3145",
+    marca: "Kyocera",
+    descripcion: "5,000 Impresiones B/N",
+    precio: "$1,550",
+    velocidad: "45 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Full Dúplex, Red, USB",
+    incluye: "Servicio correctivo en < 24hrs.",
+    popular: false,
+  },
+  {
+    id: 3,
+    paquete: "Paquete Color",
+    modelo: "Ecosys M5526",
+    marca: "Kyocera",
+    descripcion: "2,000 Impresiones Color",
+    precio: "$1,890",
+    velocidad: "26 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Color de alta calidad",
+    incluye: "Consumibles CMYK incluidos.",
+    popular: false,
+  },
+  // PARA AGREGAR OTRO EQUIPO, COPIA DESDE { HASTA }, Y PEGA AQUÍ ABAJO
+];
+
+// --- COMPONENTE: TARJETA DE IMPRESORA ---
+const PrinterCard = ({ equipo }) => {
+  const whatsappNumber = "524432796023";
+  const mensajeCotizar = `Hola, me interesa cotizar el equipo *${equipo.modelo}* (${equipo.paquete}).`;
+  const mensajeInfo = `Hola, necesito más información técnica sobre la *${equipo.modelo}*.`;
+
+  return (
+    <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all duration-300 flex flex-col relative group">
+      {/* Etiqueta de Precio (Roja estilo imagen) */}
+      <div className="bg-red-600 text-white text-center py-2 absolute top-0 right-0 left-0 z-10 mx-auto w-3/4 rounded-b-xl shadow-md">
+        <p className="text-xs uppercase font-bold opacity-90">Renta Mensual + IVA</p>
+        <p className="text-2xl font-extrabold">{equipo.precio}</p>
+      </div>
+
+      {/* Encabezado Azul */}
+      <div className="bg-cyan-500 pt-16 pb-4 px-6 text-center">
+        <h3 className="text-white text-2xl font-bold">{equipo.paquete}</h3>
+        <p className="text-white/90 font-medium text-sm mt-1">{equipo.descripcion}</p>
+      </div>
+
+      {/* Cuerpo de la Tarjeta */}
+      <div className="p-6 flex-1 flex flex-col">
+        {/* Marca y Modelo */}
+        <div className="text-center mb-6">
+          <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mb-1">{equipo.marca}</p>
+          <h4 className="text-slate-900 text-xl font-extrabold">{equipo.modelo}</h4>
+        </div>
+
+        {/* Imagen (Icono grande por ahora) */}
+        <div className="flex justify-center mb-8 transform group-hover:scale-105 transition-transform duration-500">
+           {/* Aquí iría <img src={equipo.imagen} /> si tuvieras fotos reales */}
+           <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
+             <Printer size={64} />
+           </div>
+        </div>
+
+        {/* Especificaciones Técnicas (Grid lateral como la imagen) */}
+        <div className="space-y-4 mb-6 border-t border-slate-100 pt-6">
+          <div className="flex items-center">
+            <div className="w-8 flex justify-center mr-3 text-cyan-500"><Zap size={20} /></div>
+            <div>
+              <p className="text-xs text-slate-400 font-bold uppercase">Velocidad</p>
+              <p className="text-slate-700 font-bold">{equipo.velocidad}</p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <div className="w-8 flex justify-center mr-3 text-cyan-500"><FileText size={20} /></div>
+            <div>
+              <p className="text-xs text-slate-400 font-bold uppercase">Tamaño</p>
+              <p className="text-slate-700 font-bold">{equipo.tamano}</p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <div className="w-8 flex justify-center mr-3 text-cyan-500"><Layers size={20} /></div>
+            <div>
+              <p className="text-xs text-slate-400 font-bold uppercase">Funciones</p>
+              <p className="text-slate-700 font-bold text-sm">{equipo.funciones}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Texto de inclusión (Rojo/Naranja) */}
+        <div className="text-center mb-6">
+          <p className="text-orange-600 font-bold text-sm leading-tight">{equipo.incluye}</p>
+        </div>
+
+        {/* Botones de Acción (Bottom) */}
+        <div className="mt-auto grid grid-cols-2 gap-3">
+          <a 
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeInfo)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-cyan-500 hover:bg-cyan-600 text-white py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors"
+          >
+            <Info size={16} className="mr-1" /> + INFO
+          </a>
+          <a 
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeCotizar)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-yellow-400 hover:bg-yellow-500 text-slate-900 py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors"
+          >
+            COTIZAR
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // --- COMPONENTE: VISTA DE INICIO (LO QUE YA TENÍAS) ---
 const HomeView = ({ onNavigate }) => {
@@ -23,14 +158,12 @@ const HomeView = ({ onNavigate }) => {
               Desde la renta de equipos de alto rendimiento para corporativos hasta el tóner que necesitas en casa. Somos tu aliado técnico y logístico.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* BOTÓN 1: Ir a Renta */}
               <button 
                 onClick={() => onNavigate('renta')}
                 className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-sm md:text-base hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 inline-flex items-center justify-center cursor-pointer"
               >
                 Renta y venta de impresoras
               </button>
-              {/* BOTÓN 2: Ir a Consumibles */}
               <button 
                 onClick={() => onNavigate('consumibles')}
                 className="bg-white text-slate-900 border-2 border-slate-200 px-8 py-4 rounded-full font-bold text-sm md:text-base hover:border-cyan-400 hover:text-cyan-600 transition-all inline-flex items-center justify-center cursor-pointer"
@@ -51,53 +184,29 @@ const HomeView = ({ onNavigate }) => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Card 1: Suministros */}
-            <div 
-              onClick={() => onNavigate('consumibles')}
-              className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100 cursor-pointer"
-            >
-              <div className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Droplet className="text-cyan-600" size={28} />
-              </div>
+            <div onClick={() => onNavigate('consumibles')} className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100 cursor-pointer">
+              <div className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><Droplet className="text-cyan-600" size={28} /></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Venta de Suministros</h3>
-              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                Tóner, tinta y refacciones originales y genéricas de alta calidad. Nunca te quedes sin imprimir.
-              </p>
+              <p className="text-slate-600 mb-6 text-sm leading-relaxed">Tóner, tinta y refacciones originales y genéricas de alta calidad. Nunca te quedes sin imprimir.</p>
               <ul className="space-y-2 mb-6">
                 <li className="flex items-center text-sm text-slate-500"><div className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2"></div>HP, Epson, Brother, Canon</li>
                 <li className="flex items-center text-sm text-slate-500"><div className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2"></div>Entrega a domicilio</li>
               </ul>
             </div>
-
-            {/* Card 2: Renta y Venta */}
-            <div 
-              onClick={() => onNavigate('renta')}
-              className="group bg-slate-900 rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-1 relative overflow-hidden cursor-pointer"
-            >
+            <div onClick={() => onNavigate('renta')} className="group bg-slate-900 rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-1 relative overflow-hidden cursor-pointer">
                <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500 rounded-full filter blur-3xl opacity-10"></div>
-              
-              <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Printer className="text-white" size={28} />
-              </div>
+              <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><Printer className="text-white" size={28} /></div>
               <h3 className="text-xl font-bold text-white mb-3">Renta y Venta de Equipo</h3>
-              <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                Fotocopiadoras e impresoras de alto volumen. Planes de renta deducibles para tu oficina o escuela.
-              </p>
+              <p className="text-slate-300 mb-6 text-sm leading-relaxed">Fotocopiadoras e impresoras de alto volumen. Planes de renta deducibles para tu oficina o escuela.</p>
               <ul className="space-y-2 mb-6">
                 <li className="flex items-center text-sm text-slate-300"><div className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2"></div>Planes a tu medida</li>
                 <li className="flex items-center text-sm text-slate-300"><div className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2"></div>Equipos multifuncionales</li>
               </ul>
             </div>
-
-            {/* Card 3: Servicio Tecnico */}
             <div className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100">
-              <div className="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Wrench className="text-pink-600" size={28} />
-              </div>
+              <div className="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><Wrench className="text-pink-600" size={28} /></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Servicio Técnico</h3>
-              <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                Mantenimiento preventivo y correctivo. Revivimos tus equipos y extendemos su vida útil.
-              </p>
+              <p className="text-slate-600 mb-6 text-sm leading-relaxed">Mantenimiento preventivo y correctivo. Revivimos tus equipos y extendemos su vida útil.</p>
               <ul className="space-y-2 mb-6">
                 <li className="flex items-center text-sm text-slate-500"><div className="w-1.5 h-1.5 bg-pink-400 rounded-full mr-2"></div>Diagnóstico preciso</li>
                 <li className="flex items-center text-sm text-slate-500"><div className="w-1.5 h-1.5 bg-pink-400 rounded-full mr-2"></div>Garantía de servicio</li>
@@ -111,58 +220,32 @@ const HomeView = ({ onNavigate }) => {
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            
-            {/* Left: Empresas (Primary Market) */}
             <div id="empresas" className="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-100">
               <div className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold mb-6">MERCADO CORPORATIVO</div>
               <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">Para Empresas y Escuelas</h3>
-              <p className="text-slate-600 mb-8">
-                Optimiza costos operativos con nuestros planes de renta. Nos encargamos de los consumibles y el mantenimiento para que tú te enfoques en trabajar.
-              </p>
+              <p className="text-slate-600 mb-8">Optimiza costos operativos con nuestros planes de renta. Nos encargamos de los consumibles y el mantenimiento para que tú te enfoques en trabajar.</p>
               <ul className="space-y-4 mb-8">
-                <li className="flex items-start">
-                  <CheckCircle className="text-cyan-500 mr-3 mt-1" size={20}/>
-                  <span className="text-slate-700">Contratos de servicio integral (Suministros incluidos)</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="text-cyan-500 mr-3 mt-1" size={20}/>
-                  <span className="text-slate-700">Atención prioritaria a flotillas de impresión</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle className="text-cyan-500 mr-3 mt-1" size={20}/>
-                  <span className="text-slate-700">Facturación y planes deducibles</span>
-                </li>
+                <li className="flex items-start"><CheckCircle className="text-cyan-500 mr-3 mt-1" size={20}/><span className="text-slate-700">Contratos de servicio integral (Suministros incluidos)</span></li>
+                <li className="flex items-start"><CheckCircle className="text-cyan-500 mr-3 mt-1" size={20}/><span className="text-slate-700">Atención prioritaria a flotillas de impresión</span></li>
+                <li className="flex items-start"><CheckCircle className="text-cyan-500 mr-3 mt-1" size={20}/><span className="text-slate-700">Facturación y planes deducibles</span></li>
               </ul>
-              <button onClick={() => onNavigate('renta')} className="inline-flex items-center text-slate-900 font-bold hover:text-cyan-600">
-                Solicitar propuesta empresarial <ChevronRight size={20} className="ml-1"/>
-              </button>
+              <button onClick={() => onNavigate('renta')} className="inline-flex items-center text-slate-900 font-bold hover:text-cyan-600">Solicitar propuesta empresarial <ChevronRight size={20} className="ml-1"/></button>
             </div>
-
-            {/* Right: Hogar (Secondary Market) */}
             <div id="hogar" className="pl-0 md:pl-8">
               <div className="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold mb-6">HOGAR Y ESTUDIANTES</div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">Para el Hogar y Home Office</h3>
-              <p className="text-slate-600 mb-6">
-                ¿Tu impresora imprime rayas o te quedaste sin tinta a mitad de un trabajo? Tenemos la solución rápida y económica.
-              </p>
+              <p className="text-slate-600 mb-6">¿Tu impresora imprime rayas o te quedaste sin tinta a mitad de un trabajo? Tenemos la solución rápida y económica.</p>
               <div className="space-y-4">
                 <div onClick={() => onNavigate('consumibles')} className="flex items-center p-4 bg-white rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-shadow">
                   <Droplet className="text-cyan-500 mr-4" size={24}/>
-                  <div>
-                    <h4 className="font-bold text-slate-800">Venta de Tóner y Tinta</h4>
-                    <p className="text-sm text-slate-500">Precios competitivos en originales y genéricos.</p>
-                  </div>
+                  <div><h4 className="font-bold text-slate-800">Venta de Tóner y Tinta</h4><p className="text-sm text-slate-500">Precios competitivos en originales y genéricos.</p></div>
                 </div>
                 <div className="flex items-center p-4 bg-white rounded-xl shadow-sm">
                   <Wrench className="text-pink-500 mr-4" size={24}/>
-                  <div>
-                    <h4 className="font-bold text-slate-800">Reparación Express</h4>
-                    <p className="text-sm text-slate-500">Diagnóstico rápido para equipos domésticos.</p>
-                  </div>
+                  <div><h4 className="font-bold text-slate-800">Reparación Express</h4><p className="text-sm text-slate-500">Diagnóstico rápido para equipos domésticos.</p></div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -170,7 +253,7 @@ const HomeView = ({ onNavigate }) => {
   );
 };
 
-// --- NUEVA VISTA: RENTA Y VENTA ---
+// --- NUEVA VISTA: RENTA Y VENTA (CON CATÁLOGO) ---
 const RentaView = ({ onBack }) => (
   <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,14 +261,24 @@ const RentaView = ({ onBack }) => (
         <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
       </button>
       
-      <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
-        <div className="inline-block px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs font-bold mb-6 uppercase">Soluciones Corporativas</div>
-        <h1 className="text-4xl font-bold text-slate-900 mb-6">Renta y Venta de Impresoras</h1>
-        <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-3xl">
-          Olvídate de comprar equipos caros que se deprecian. Con nuestros planes de renta, tu empresa siempre tendrá tecnología de punta con servicio incluido.
+      {/* Título de la Sección */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-bold text-slate-900 mb-4">Renta y Venta de Impresoras</h1>
+        <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          Catálogo de equipos disponibles. Planes flexibles que se adaptan a tu volumen de impresión.
         </p>
+      </div>
 
-        <div className="grid md:grid-cols-2 gap-12 mb-12">
+      {/* GRID DE EQUIPOS (Aquí se muestran las tarjetas) */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+        {catalogoEquipos.map((equipo) => (
+          <PrinterCard key={equipo.id} equipo={equipo} />
+        ))}
+      </div>
+
+      {/* Información Adicional */}
+      <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
+        <div className="grid md:grid-cols-2 gap-12">
           <div>
             <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
               <Printer className="text-cyan-500 mr-3" /> Beneficios de la Renta
@@ -219,26 +312,12 @@ const RentaView = ({ onBack }) => (
             <p className="text-sm text-slate-500 italic">Consulta disponibilidad de modelos específicos.</p>
           </div>
         </div>
-
-        <div className="border-t border-slate-100 pt-10">
-          <h3 className="text-2xl font-bold text-slate-900 mb-6 text-center">¿Listo para modernizar tu oficina?</h3>
-          <div className="flex justify-center">
-            <a 
-              href="https://wa.me/524432796023?text=Hola,%20me%20interesa%20una%20cotización%20de%20renta%20de%20equipos."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg flex items-center"
-            >
-              <MessageCircle className="mr-2" /> Solicitar Cotización por WhatsApp
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   </section>
 );
 
-// --- NUEVA VISTA: CONSUMIBLES ---
+// --- NUEVA VISTA: CONSUMIBLES (IGUAL QUE ANTES) ---
 const ConsumiblesView = ({ onBack }) => (
   <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -255,23 +334,17 @@ const ConsumiblesView = ({ onBack }) => (
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mb-4">
-              <Droplet className="text-cyan-600" size={24}/>
-            </div>
+            <div className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mb-4"><Droplet className="text-cyan-600" size={24}/></div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Tóner y Tinta</h3>
             <p className="text-slate-600 text-sm">Cartuchos originales y compatibles premium. Ahorra hasta un 60% con nuestros genéricos garantizados.</p>
           </div>
           <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-              <Box className="text-purple-600" size={24}/>
-            </div>
+            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4"><Box className="text-purple-600" size={24}/></div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Refacciones</h3>
             <p className="text-slate-600 text-sm">Fusores, rodillos, engranes y piezas internas para reparar tu equipo y extender su vida útil.</p>
           </div>
           <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <Zap className="text-orange-600" size={24}/>
-            </div>
+            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4"><Zap className="text-orange-600" size={24}/></div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Chips y Tambores</h3>
             <p className="text-slate-600 text-sm">Unidades de imagen (Drum) y chips de reseteo para todas las marcas comerciales.</p>
           </div>
@@ -310,7 +383,6 @@ const SuministrosHega = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentView, setCurrentView] = useState('home'); // 'home', 'renta', 'consumibles'
 
-  // Función para navegar y hacer scroll arriba
   const navigateTo = (viewName) => {
     setCurrentView(viewName);
     setIsMenuOpen(false);
@@ -398,9 +470,7 @@ const SuministrosHega = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0">
-                    <Phone size={20} className="text-cyan-400" />
-                  </div>
+                  <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0"><Phone size={20} className="text-cyan-400" /></div>
                   <div>
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Morelia</p>
                     <p className="text-lg font-medium mb-2">(443) 279-6023</p>
@@ -408,21 +478,12 @@ const SuministrosHega = () => {
                     <p className="text-lg font-medium">(445) 458-1529 <span className="text-slate-500 mx-1">|</span> (445) 457-4955</p>
                   </div>
                 </div>
-
                 <a href={whatsappLinkGenerico} target="_blank" rel="noopener noreferrer" className="flex items-center group cursor-pointer hover:bg-slate-800/50 p-2 rounded-lg -ml-2 transition-colors">
-                  <div className="w-10 h-10 bg-green-900/30 rounded-full flex items-center justify-center mr-4 group-hover:bg-green-600 transition-colors">
-                    <MessageCircle size={20} className="text-green-400 group-hover:text-white" />
-                  </div>
-                  <div>
-                     <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">WhatsApp</p>
-                     <span className="text-lg font-medium group-hover:text-green-400 transition-colors">(443) 279-6023</span>
-                  </div>
+                  <div className="w-10 h-10 bg-green-900/30 rounded-full flex items-center justify-center mr-4 group-hover:bg-green-600 transition-colors"><MessageCircle size={20} className="text-green-400 group-hover:text-white" /></div>
+                  <div><p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">WhatsApp</p><span className="text-lg font-medium group-hover:text-green-400 transition-colors">(443) 279-6023</span></div>
                 </a>
-
                 <div className="flex items-center">
-                  <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4">
-                    <Mail size={20} className="text-cyan-400" />
-                  </div>
+                  <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4"><Mail size={20} className="text-cyan-400" /></div>
                   <span className="text-lg font-medium">contacto@suministroshega.mx</span>
                 </div>
               </div>
@@ -432,31 +493,12 @@ const SuministrosHega = () => {
               <h3 className="text-2xl font-bold mb-6">Envíanos un mensaje</h3>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nombre</label>
-                    <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium" placeholder="Tu nombre" required />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Teléfono</label>
-                    <input type="tel" name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium" placeholder="Opcional" />
-                  </div>
+                  <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nombre</label><input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium" placeholder="Tu nombre" required /></div>
+                  <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Teléfono</label><input type="tel" name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium" placeholder="Opcional" /></div>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Me interesa</label>
-                  <select name="servicio" value={formData.servicio} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium cursor-pointer">
-                    <option>Renta de Equipos</option>
-                    <option>Compra de Suministros</option>
-                    <option>Servicio Técnico</option>
-                    <option>Otro</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mensaje</label>
-                  <textarea name="mensaje" value={formData.mensaje} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none h-28 font-medium resize-none" placeholder="Cuéntanos más..." required></textarea>
-                </div>
-                <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                  <MessageCircle size={20} /> Enviar a WhatsApp
-                </button>
+                <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Me interesa</label><select name="servicio" value={formData.servicio} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium cursor-pointer"><option>Renta de Equipos</option><option>Compra de Suministros</option><option>Servicio Técnico</option><option>Otro</option></select></div>
+                <div><label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mensaje</label><textarea name="mensaje" value={formData.mensaje} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none h-28 font-medium resize-none" placeholder="Cuéntanos más..." required></textarea></div>
+                <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2"><MessageCircle size={20} /> Enviar a WhatsApp</button>
               </form>
             </div>
           </div>
@@ -464,12 +506,8 @@ const SuministrosHega = () => {
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-slate-500 text-sm">© 2024 Suministros Hega. Todos los derechos reservados.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-               <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors">
-                 <Facebook size={20} /> HEGAsuministros
-               </a>
-               <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors">
-                 <Instagram size={20} /> @suministroshega
-               </a>
+               <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Facebook size={20} /> HEGAsuministros</a>
+               <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Instagram size={20} /> @suministroshega</a>
             </div>
           </div>
         </div>
