@@ -4,8 +4,8 @@ import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Ma
 const SuministrosHega = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Enlace directo a WhatsApp (Formato internacional sin +)
-  const whatsappLink = "https://wa.me/524432496023?text=Hola,%20me%20interesa%20cotizar%20un%20servicio.";
+  // Enlace directo a WhatsApp (Actualizado a terminación 6023 -> 279-6023)
+  const whatsappLink = "https://wa.me/524432796023?text=Hola,%20me%20interesa%20cotizar%20un%20servicio.";
 
   return (
     <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
@@ -246,7 +246,8 @@ const SuministrosHega = () => {
                   </div>
                   <div>
                      <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">WhatsApp</p>
-                     <span className="text-lg font-medium group-hover:text-green-400 transition-colors">(443) 249-6023</span>
+                     {/* UPDATE: Número actualizado a 279-6023 */}
+                     <span className="text-lg font-medium group-hover:text-green-400 transition-colors">(443) 279-6023</span>
                   </div>
                 </a>
 
@@ -255,7 +256,8 @@ const SuministrosHega = () => {
                   <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4">
                     <Mail size={20} className="text-cyan-400" />
                   </div>
-                  <span className="text-lg font-medium">contacto@suministroshega.com</span>
+                  {/* UPDATE: Corrección a .mx */}
+                  <span className="text-lg font-medium">contacto@suministroshega.mx</span>
                 </div>
               </div>
             </div>
