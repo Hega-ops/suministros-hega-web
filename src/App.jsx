@@ -1,10 +1,101 @@
 import React, { useState } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram } from 'lucide-react';
 
-// --- COMPONENTE: VISTA DE INICIO (LO QUE YA TENÍAS) ---
-const HomeView = ({ onNavigate }) => {
+const SuministrosHega = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Estado para guardar los datos del formulario
+  const [formData, setFormData] = useState({
+    nombre: '',
+    telefono: '',
+    servicio: 'Renta de equipos (Empresas)',
+    mensaje: ''
+  });
+
+  // Enlace directo a WhatsApp (Número actualizado: 443 279 6023)
+  const whatsappNumber = "524432796023";
+  const whatsappLinkGenerico = `https://wa.me/${whatsappNumber}?text=Hola,%20me%20interesa%20cotizar%20un%20servicio.`;
+
+  // Función para manejar cambios en los inputs
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Función para enviar el formulario a WhatsApp
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { nombre, telefono, servicio, mensaje } = formData;
+    
+    // Construimos el mensaje formateado
+    const text = `Hola Suministros Hega, mi nombre es *${nombre}*.%0A%0AMe interesa: *${servicio}*%0A${telefono ? `Mi teléfono es: ${telefono}%0A` : ''}${mensaje ? `Mensaje: ${mensaje}` : ''}`;
+    
+    // Abrimos WhatsApp con el mensaje
+    window.open(`https://wa.me/${whatsappNumber}?text=${text}`, '_blank');
+  };
+
   return (
-    <>
+    <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
+      
+      {/* --- NAVBAR --- */}
+      <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-28">
+            {/* Logo Section */}
+            <div className="flex-shrink-0 flex items-center gap-4 cursor-pointer">
+              <img src="/LOGO SH.png" alt="Suministros Hega" className="h-24 w-auto object-contain" />
+              
+              <div className="hidden md:block">
+                <h1 className="text-xl font-bold text-slate-900 leading-none tracking-wide">SUMINISTROS HEGA</h1>
+                <p className="text-xs text-slate-500 font-medium tracking-widest mt-1">SOLUCIÓN EN IMPRESIÓN</p>
+              </div>
+            </div>
+
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#inicio" className="text-sm font-medium hover:text-cyan-600 transition-colors">Inicio</a>
+              <a href="#servicios" className="text-sm font-medium hover:text-cyan-600 transition-colors">Servicios</a>
+              <a href="#empresas" className="text-sm font-medium hover:text-cyan-600 transition-colors">Empresas</a>
+              <a href="#hogar" className="text-sm font-medium hover:text-cyan-600 transition-colors">Hogar</a>
+              <a 
+                href={whatsappLinkGenerico}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2"
+              >
+                <MessageCircle size={16} />
+                Cotizar por WhatsApp
+              </a>
+            </div>
+
+            {/* Mobile Button */}
+            <div className="md:hidden">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-900 focus:outline-none">
+                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
+            <div className="px-4 pt-2 pb-6 space-y-2">
+              <a href="#inicio" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Inicio</a>
+              <a href="#servicios" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Servicios</a>
+              <a href="#empresas" className="block px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Para Empresas</a>
+              <a href={whatsappLinkGenerico} target="_blank" rel="noopener noreferrer" className="w-full mt-4 bg-green-600 text-white px-6 py-3 rounded-full font-bold flex justify-center items-center gap-2">
+                <MessageCircle size={20} />
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        )}
+      </nav>
+
       {/* --- HERO SECTION --- */}
       <section id="inicio" className="relative pt-40 pb-20 lg:pt-56 lg:pb-32 overflow-hidden">
         {/* Background Elements */}
@@ -23,19 +114,11 @@ const HomeView = ({ onNavigate }) => {
               Desde la renta de equipos de alto rendimiento para corporativos hasta el tóner que necesitas en casa. Somos tu aliado técnico y logístico.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              {/* BOTÓN 1: Ir a Renta */}
-              <button 
-                onClick={() => onNavigate('renta')}
-                className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-sm md:text-base hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 inline-flex items-center justify-center cursor-pointer"
-              >
-                Renta y venta de impresoras
+              <button className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-sm md:text-base hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10">
+                Ver Soluciones para Empresas
               </button>
-              {/* BOTÓN 2: Ir a Consumibles */}
-              <button 
-                onClick={() => onNavigate('consumibles')}
-                className="bg-white text-slate-900 border-2 border-slate-200 px-8 py-4 rounded-full font-bold text-sm md:text-base hover:border-cyan-400 hover:text-cyan-600 transition-all inline-flex items-center justify-center cursor-pointer"
-              >
-                Consumibles y refacciones
+              <button className="bg-white text-slate-900 border-2 border-slate-200 px-8 py-4 rounded-full font-bold text-sm md:text-base hover:border-cyan-400 hover:text-cyan-600 transition-all">
+                Busco Suministros / Servicio
               </button>
             </div>
           </div>
@@ -52,10 +135,7 @@ const HomeView = ({ onNavigate }) => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Card 1: Suministros */}
-            <div 
-              onClick={() => onNavigate('consumibles')}
-              className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100 cursor-pointer"
-            >
+            <div className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100">
               <div className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Droplet className="text-cyan-600" size={28} />
               </div>
@@ -70,10 +150,8 @@ const HomeView = ({ onNavigate }) => {
             </div>
 
             {/* Card 2: Renta y Venta */}
-            <div 
-              onClick={() => onNavigate('renta')}
-              className="group bg-slate-900 rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-1 relative overflow-hidden cursor-pointer"
-            >
+            <div className="group bg-slate-900 rounded-2xl p-8 transition-all hover:shadow-xl hover:shadow-slate-900/20 hover:-translate-y-1 relative overflow-hidden">
+               {/* Decorative gradient inside card */}
                <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500 rounded-full filter blur-3xl opacity-10"></div>
               
               <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -133,9 +211,9 @@ const HomeView = ({ onNavigate }) => {
                   <span className="text-slate-700">Facturación y planes deducibles</span>
                 </li>
               </ul>
-              <button onClick={() => onNavigate('renta')} className="inline-flex items-center text-slate-900 font-bold hover:text-cyan-600">
+              <a href="#contacto" className="inline-flex items-center text-slate-900 font-bold hover:text-cyan-600">
                 Solicitar propuesta empresarial <ChevronRight size={20} className="ml-1"/>
-              </button>
+              </a>
             </div>
 
             {/* Right: Hogar (Secondary Market) */}
@@ -146,7 +224,7 @@ const HomeView = ({ onNavigate }) => {
                 ¿Tu impresora imprime rayas o te quedaste sin tinta a mitad de un trabajo? Tenemos la solución rápida y económica.
               </p>
               <div className="space-y-4">
-                <div onClick={() => onNavigate('consumibles')} className="flex items-center p-4 bg-white rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                <div className="flex items-center p-4 bg-white rounded-xl shadow-sm">
                   <Droplet className="text-cyan-500 mr-4" size={24}/>
                   <div>
                     <h4 className="font-bold text-slate-800">Venta de Tóner y Tinta</h4>
@@ -166,237 +244,19 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
-    </>
-  );
-};
 
-// --- NUEVA VISTA: RENTA Y VENTA ---
-const RentaView = ({ onBack }) => (
-  <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
-        <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
-      </button>
-      
-      <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
-        <div className="inline-block px-4 py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs font-bold mb-6 uppercase">Soluciones Corporativas</div>
-        <h1 className="text-4xl font-bold text-slate-900 mb-6">Renta y Venta de Impresoras</h1>
-        <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-3xl">
-          Olvídate de comprar equipos caros que se deprecian. Con nuestros planes de renta, tu empresa siempre tendrá tecnología de punta con servicio incluido.
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-12 mb-12">
-          <div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
-              <Printer className="text-cyan-500 mr-3" /> Beneficios de la Renta
-            </h3>
-            <ul className="space-y-4">
-              {[
-                "Cero inversión inicial en equipos.",
-                "Deducible de impuestos al 100%.",
-                "Mantenimiento preventivo y correctivo incluido.",
-                "Suministros (tóner y refacciones) incluidos.",
-                "Soporte técnico prioritario (menos de 24 hrs).",
-                "Equipos multifuncionales (Copia, Imprime, Escanea)."
-              ].map((item, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle className="text-green-500 mr-3 mt-1 flex-shrink-0" size={20}/>
-                  <span className="text-slate-700 font-medium">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-slate-50 p-8 rounded-2xl">
-            <h3 className="text-xl font-bold text-slate-900 mb-4">¿Prefieres Comprar?</h3>
-            <p className="text-slate-600 mb-6">
-              También contamos con venta de equipos nuevos y seminuevos garantizados de las mejores marcas.
-            </p>
-            <div className="flex flex-wrap gap-3 mb-6">
-              {["Kyocera", "Ricoh", "Canon", "Brother", "HP", "Samsung"].map(brand => (
-                <span key={brand} className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-500">{brand}</span>
-              ))}
-            </div>
-            <p className="text-sm text-slate-500 italic">Consulta disponibilidad de modelos específicos.</p>
-          </div>
-        </div>
-
-        <div className="border-t border-slate-100 pt-10">
-          <h3 className="text-2xl font-bold text-slate-900 mb-6 text-center">¿Listo para modernizar tu oficina?</h3>
-          <div className="flex justify-center">
-            <a 
-              href="https://wa.me/524432796023?text=Hola,%20me%20interesa%20una%20cotización%20de%20renta%20de%20equipos."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg flex items-center"
-            >
-              <MessageCircle className="mr-2" /> Solicitar Cotización por WhatsApp
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-// --- NUEVA VISTA: CONSUMIBLES ---
-const ConsumiblesView = ({ onBack }) => (
-  <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
-        <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
-      </button>
-      
-      <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
-        <div className="inline-block px-4 py-1.5 bg-green-100 text-green-800 rounded-full text-xs font-bold mb-6 uppercase">Hogar y Oficina</div>
-        <h1 className="text-4xl font-bold text-slate-900 mb-6">Consumibles y Refacciones</h1>
-        <p className="text-xl text-slate-600 mb-10 leading-relaxed max-w-3xl">
-          Mantenemos tu impresora funcionando con la mejor calidad. Encuentra tóner original, genérico de alto rendimiento y las refacciones que necesitas.
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-cyan-100 rounded-full flex items-center justify-center mb-4">
-              <Droplet className="text-cyan-600" size={24}/>
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Tóner y Tinta</h3>
-            <p className="text-slate-600 text-sm">Cartuchos originales y compatibles premium. Ahorra hasta un 60% con nuestros genéricos garantizados.</p>
-          </div>
-          <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-              <Box className="text-purple-600" size={24}/>
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Refacciones</h3>
-            <p className="text-slate-600 text-sm">Fusores, rodillos, engranes y piezas internas para reparar tu equipo y extender su vida útil.</p>
-          </div>
-          <div className="p-6 border border-slate-100 rounded-2xl hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <Zap className="text-orange-600" size={24}/>
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Chips y Tambores</h3>
-            <p className="text-slate-600 text-sm">Unidades de imagen (Drum) y chips de reseteo para todas las marcas comerciales.</p>
-          </div>
-        </div>
-
-        <div className="bg-slate-900 text-white rounded-2xl p-8 mb-10">
-          <h3 className="text-2xl font-bold mb-4">Manejamos todas las marcas principales</h3>
-          <div className="flex flex-wrap gap-8 opacity-70">
-             <span className="text-xl font-bold">HP</span>
-             <span className="text-xl font-bold">BROTHER</span>
-             <span className="text-xl font-bold">EPSON</span>
-             <span className="text-xl font-bold">CANON</span>
-             <span className="text-xl font-bold">SAMSUNG</span>
-             <span className="text-xl font-bold">XEROX</span>
-             <span className="text-xl font-bold">KYOCERA</span>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <a 
-            href="https://wa.me/524432796023?text=Hola,%20busco%20precio%20de%20un%20tóner%20modelo..."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-green-600 text-white px-8 py-4 rounded-full font-bold hover:bg-green-700 transition-all shadow-lg inline-flex items-center"
-          >
-            <MessageCircle className="mr-2" /> Preguntar Precio por WhatsApp
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-// --- COMPONENTE PRINCIPAL (APP) ---
-const SuministrosHega = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'renta', 'consumibles'
-
-  // Función para navegar y hacer scroll arriba
-  const navigateTo = (viewName) => {
-    setCurrentView(viewName);
-    setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const whatsappNumber = "524432796023";
-  const whatsappLinkGenerico = `https://wa.me/${whatsappNumber}?text=Hola,%20me%20interesa%20cotizar%20un%20servicio.`;
-
-  const [formData, setFormData] = useState({ nombre: '', telefono: '', servicio: 'Renta de equipos', mensaje: '' });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { nombre, telefono, servicio, mensaje } = formData;
-    const text = `Hola Suministros Hega, mi nombre es *${nombre}*.%0A%0AMe interesa: *${servicio}*%0A${telefono ? `Mi teléfono es: ${telefono}%0A` : ''}${mensaje ? `Mensaje: ${mensaje}` : ''}`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${text}`, '_blank');
-  };
-
-  return (
-    <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
-      
-      {/* --- NAVBAR --- */}
-      <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-28">
-            <div className="flex-shrink-0 flex items-center gap-4 cursor-pointer" onClick={() => navigateTo('home')}>
-              <img src="/LOGO SH.png" alt="Suministros Hega" className="h-24 w-auto object-contain" />
-              <div className="hidden md:block">
-                <h1 className="text-xl font-bold text-slate-900 leading-none tracking-wide">SUMINISTROS HEGA</h1>
-                <p className="text-xs text-slate-500 font-medium tracking-widest mt-1">SOLUCIÓN EN IMPRESIÓN</p>
-              </div>
-            </div>
-
-            <div className="hidden md:flex items-center space-x-8">
-              <button onClick={() => navigateTo('home')} className={`text-sm font-medium transition-colors ${currentView === 'home' ? 'text-cyan-600 font-bold' : 'hover:text-cyan-600'}`}>Inicio</button>
-              <button onClick={() => navigateTo('renta')} className={`text-sm font-medium transition-colors ${currentView === 'renta' ? 'text-cyan-600 font-bold' : 'hover:text-cyan-600'}`}>Renta y Venta</button>
-              <button onClick={() => navigateTo('consumibles')} className={`text-sm font-medium transition-colors ${currentView === 'consumibles' ? 'text-cyan-600 font-bold' : 'hover:text-cyan-600'}`}>Consumibles</button>
-              <a 
-                href={whatsappLinkGenerico}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2"
-              >
-                <MessageCircle size={16} />
-                Cotizar
-              </a>
-            </div>
-
-            <div className="md:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-slate-900 focus:outline-none">
-                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
-            <div className="px-4 pt-2 pb-6 space-y-2">
-              <button onClick={() => navigateTo('home')} className="block w-full text-left px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Inicio</button>
-              <button onClick={() => navigateTo('renta')} className="block w-full text-left px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Renta y Venta</button>
-              <button onClick={() => navigateTo('consumibles')} className="block w-full text-left px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Consumibles</button>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* --- CONTENIDO DINÁMICO --- */}
-      {currentView === 'home' && <HomeView onNavigate={navigateTo} />}
-      {currentView === 'renta' && <RentaView onBack={() => navigateTo('home')} />}
-      {currentView === 'consumibles' && <ConsumiblesView onBack={() => navigateTo('home')} />}
-
-      {/* --- FOOTER (SIEMPRE VISIBLE) --- */}
+      {/* --- CTA / FOOTER --- */}
       <footer id="contacto" className="bg-slate-900 text-white pt-20 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 mb-16">
             <div>
-              <h2 className="text-3xl font-bold mb-6">Contáctanos</h2>
-              <p className="text-slate-400 mb-8 max-w-md">Estamos listos para atenderte en nuestras sucursales o vía digital.</p>
+              <h2 className="text-3xl font-bold mb-6">Hablemos de tus necesidades de impresión</h2>
+              <p className="text-slate-400 mb-8 max-w-md">
+                Estamos listos para atenderte en nuestras sucursales o vía digital.
+              </p>
               
               <div className="space-y-6">
+                {/* Teléfonos */}
                 <div className="flex items-start">
                   <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0">
                     <Phone size={20} className="text-cyan-400" />
@@ -409,6 +269,7 @@ const SuministrosHega = () => {
                   </div>
                 </div>
 
+                {/* WhatsApp */}
                 <a href={whatsappLinkGenerico} target="_blank" rel="noopener noreferrer" className="flex items-center group cursor-pointer hover:bg-slate-800/50 p-2 rounded-lg -ml-2 transition-colors">
                   <div className="w-10 h-10 bg-green-900/30 rounded-full flex items-center justify-center mr-4 group-hover:bg-green-600 transition-colors">
                     <MessageCircle size={20} className="text-green-400 group-hover:text-white" />
@@ -419,6 +280,7 @@ const SuministrosHega = () => {
                   </div>
                 </a>
 
+                {/* Email */}
                 <div className="flex items-center">
                   <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center mr-4">
                     <Mail size={20} className="text-cyan-400" />
@@ -428,34 +290,66 @@ const SuministrosHega = () => {
               </div>
             </div>
 
+            {/* --- FORMULARIO ACTIVO --- */}
             <div className="bg-white rounded-2xl p-8 text-slate-900 shadow-2xl shadow-black/20">
               <h3 className="text-2xl font-bold mb-6">Envíanos un mensaje</h3>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nombre</label>
-                    <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium" placeholder="Tu nombre" required />
+                    <input 
+                      type="text" 
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all font-medium" 
+                      placeholder="Tu nombre" 
+                      required
+                    />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Teléfono</label>
-                    <input type="tel" name="telefono" value={formData.telefono} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium" placeholder="Opcional" />
+                    <input 
+                      type="tel" 
+                      name="telefono"
+                      value={formData.telefono}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all font-medium" 
+                      placeholder="Opcional" 
+                    />
                   </div>
                 </div>
+                
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Me interesa</label>
-                  <select name="servicio" value={formData.servicio} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium cursor-pointer">
-                    <option>Renta de Equipos</option>
-                    <option>Compra de Suministros</option>
-                    <option>Servicio Técnico</option>
+                  <select 
+                    name="servicio"
+                    value={formData.servicio}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none font-medium cursor-pointer"
+                  >
+                    <option>Renta de Equipos (Empresa)</option>
+                    <option>Comprar Cartuchos / Tóner</option>
+                    <option>Solicitar Servicio Técnico</option>
                     <option>Otro</option>
                   </select>
                 </div>
+                
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Mensaje</label>
-                  <textarea name="mensaje" value={formData.mensaje} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 outline-none h-28 font-medium resize-none" placeholder="Cuéntanos más..." required></textarea>
+                  <textarea 
+                    name="mensaje"
+                    value={formData.mensaje}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-slate-50 rounded-lg border border-slate-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all h-28 font-medium resize-none" 
+                    placeholder="Cuéntanos más detalles..."
+                    required
+                  ></textarea>
                 </div>
-                <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2">
-                  <MessageCircle size={20} /> Enviar a WhatsApp
+                
+                <button type="submit" className="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:-translate-y-1 flex items-center justify-center gap-2">
+                  <MessageCircle size={20} />
+                  Enviar a WhatsApp
                 </button>
               </form>
             </div>
@@ -464,20 +358,37 @@ const SuministrosHega = () => {
           <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-slate-500 text-sm">© 2024 Suministros Hega. Todos los derechos reservados.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-               <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors">
-                 <Facebook size={20} /> HEGAsuministros
+               {/* Facebook */}
+               <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer">
+                 <div className="w-8 h-8 bg-slate-800 rounded-full group-hover:bg-[#1877F2] group-hover:text-white transition-all flex items-center justify-center">
+                   <Facebook size={16} className="text-slate-400 group-hover:text-white" />
+                 </div>
+                 <span className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">HEGAsuministros</span>
                </a>
-               <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors">
-                 <Instagram size={20} /> @suministroshega
+               
+               {/* Instagram */}
+               <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer">
+                 <div className="w-8 h-8 bg-slate-800 rounded-full group-hover:bg-[#E4405F] group-hover:text-white transition-all flex items-center justify-center">
+                   <Instagram size={16} className="text-slate-400 group-hover:text-white" />
+                 </div>
+                 <span className="text-sm font-medium text-slate-400 group-hover:text-white transition-colors">@suministroshega</span>
                </a>
             </div>
           </div>
         </div>
       </footer>
       
-      <a href={whatsappLinkGenerico} target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all transform hover:scale-110 hover:-translate-y-1 flex items-center justify-center" aria-label="Contactar por WhatsApp">
+      {/* --- BOTÓN FLOTANTE WHATSAPP --- */}
+      <a
+        href={whatsappLinkGenerico}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:bg-green-600 transition-all transform hover:scale-110 hover:-translate-y-1 flex items-center justify-center"
+        aria-label="Contactar por WhatsApp"
+      >
         <MessageCircle size={32} />
       </a>
+
     </div>
   );
 };
