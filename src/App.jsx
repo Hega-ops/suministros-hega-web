@@ -4,20 +4,20 @@ import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Ma
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
 const DATA_INICIAL = [
   // --- EQUIPOS DE RENTA ---
-{
-    "id": 1,
-    "paquete": "Paquete Básico",
-    "modelo": "ProXpress M4080FX",
-    "marca": "Samsung",
-    "descripcion": "3,000 Impresiones B/N",
-    "precio": "$1,100",
-    "velocidad": "40 ppm",
-    "tamano": "Carta y Oficio",
-    "funciones": "Copia, imprime, escanea",
-    "incluye": "Tóner, consumibles y refacciones incluidos.",
-    "popular": true,
-    "imagen": "/M4080.png"
-  },
+  {
+    id: 1,
+    categoria: "renta",
+    paquete: "Paquete Básico",
+    modelo: "Ecosys M2040",
+    marca: "Kyocera",
+    descripcion: "3,000 Impresiones B/N",
+    precio: "$1,245",
+    velocidad: "42 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Copia, imprime, escanea",
+    incluye: "Tóner, consumibles y refacciones incluidos.",
+    popular: true,
+    imagen: ""
   },
   {
     id: 2,
