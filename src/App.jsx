@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight } from 'lucide-react';
 
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
 const DATA_INICIAL = [
@@ -46,10 +46,10 @@ const DATA_INICIAL = [
     marca: "Brother",
     descripcion: "Cartucho de Tóner",
     precio: "$180",
-    velocidad: "1,000 págs", // En consumibles esto es Rendimiento
-    tamano: "HL-1110, 1210W", // En consumibles esto es Compatibilidad
-    funciones: "Negro", // En consumibles esto es Color
-    incluye: "Garantía de rendimiento al 100%.",
+    velocidad: "1,000 págs", 
+    tamano: "HL-1110, 1210W", 
+    funciones: "Negro", 
+    incluye: "Garantía total",
     popular: true,
     imagen: ""
   },
@@ -58,34 +58,31 @@ const DATA_INICIAL = [
     categoria: "consumible",
     subcategoria: "refaccion",
     paquete: "Original",
-    modelo: "Kit Mantenimiento MK-3160",
+    modelo: "Kit MK-3160",
     marca: "Kyocera",
     descripcion: "Kit completo",
     precio: "$4,200",
-    velocidad: "300,000 págs",
-    tamano: "Ecosys M3645idn",
+    velocidad: "300k págs",
+    tamano: "M3645idn",
     funciones: "Original",
-    incluye: "Incluye unidades de revelado y tambor.",
+    incluye: "Unidades revelado/tambor",
     popular: false,
     imagen: ""
   }
 ];
 
-// --- COMPONENTE: TARJETA DE PRODUCTO (Adapta etiquetas según si es Impresora o Consumible) ---
+// --- COMPONENTE: TARJETA GRANDE (PARA IMPRESORAS) ---
 const PrinterCard = ({ equipo }) => {
   const whatsappNumber = "524432796023";
   const isVenta = equipo.categoria === 'venta';
-  const isConsumible = equipo.categoria === 'consumible';
   const isRemate = equipo.subcategoria === 'remate';
   
-  // Textos dinámicos
-  let mensajeCotizar = `Hola, me interesa cotizar la renta del equipo *${equipo.modelo}* (${equipo.paquete}).`;
-  if (isVenta) mensajeCotizar = `Hola, me interesa comprar el equipo *${equipo.modelo}*.`;
-  if (isConsumible) mensajeCotizar = `Hola, me interesa comprar el consumible *${equipo.modelo}* para ${equipo.marca}.`;
+  const mensajeCotizar = isVenta 
+    ? `Hola, me interesa el equipo de venta *${equipo.modelo}* (${equipo.paquete}).`
+    : `Hola, me interesa cotizar la renta del equipo *${equipo.modelo}* (${equipo.paquete}).`;
     
-  const mensajeInfo = `Hola, necesito más información técnica sobre *${equipo.modelo}*.`;
+  const mensajeInfo = `Hola, necesito más información técnica sobre la *${equipo.modelo}*.`;
 
-  // Colores dinámicos
   let etiquetaColor = "bg-red-600";
   let etiquetaTexto = "Renta Mensual + IVA";
   let headerColor = "bg-cyan-500";
@@ -100,31 +97,15 @@ const PrinterCard = ({ equipo }) => {
       etiquetaTexto = "Precio de Venta + IVA";
       headerColor = "bg-slate-800";
     }
-  } else if (isConsumible) {
-    etiquetaColor = "bg-blue-600";
-    etiquetaTexto = "Precio Unitario + IVA";
-    headerColor = "bg-blue-500";
   }
-
-  // Etiquetas de especificaciones dinámicas
-  const labelVelocidad = isConsumible ? "Rendimiento" : "Velocidad";
-  const labelTamano = isConsumible ? "Compatibilidad" : "Tamaño";
-  const labelFunciones = isConsumible ? "Color / Tipo" : "Funciones";
-
-  // Iconos dinámicos
-  const Icon1 = isConsumible ? FileText : Zap;
-  const Icon2 = isConsumible ? Printer : FileText;
-  const Icon3 = isConsumible ? Droplet : Layers;
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all duration-300 flex flex-col relative group h-full">
-      {/* Etiqueta de Precio */}
       <div className={`${etiquetaColor} text-white text-center py-2 absolute top-0 right-0 left-0 z-10 mx-auto w-3/4 rounded-b-xl shadow-md`}>
         <p className="text-xs uppercase font-bold opacity-90">{etiquetaTexto}</p>
         <p className="text-2xl font-extrabold">{equipo.precio}</p>
       </div>
 
-      {/* Encabezado */}
       <div className={`${headerColor} pt-16 pb-4 px-6 text-center transition-colors`}>
         <h3 className="text-white text-2xl font-bold">{equipo.paquete}</h3>
         <p className="text-white/90 font-medium text-sm mt-1">{equipo.descripcion}</p>
@@ -136,44 +117,26 @@ const PrinterCard = ({ equipo }) => {
           <h4 className="text-slate-900 text-xl font-extrabold">{equipo.modelo}</h4>
         </div>
 
-        {/* Imagen */}
         <div className="flex justify-center mb-8 h-48 items-center transform group-hover:scale-105 transition-transform duration-500">
            {equipo.imagen ? (
-             <img 
-               src={equipo.imagen} 
-               alt={equipo.modelo} 
-               className="h-full w-auto object-contain max-w-full drop-shadow-lg"
-               onError={(e) => {e.target.onerror = null; e.target.src=""}} 
-             />
+             <img src={equipo.imagen} alt={equipo.modelo} className="h-full w-auto object-contain max-w-full drop-shadow-lg" onError={(e) => {e.target.onerror = null; e.target.src=""}} />
            ) : (
-             <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
-               {isConsumible ? <Droplet size={64} /> : <Printer size={64} />}
-             </div>
+             <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-300"><Printer size={64} /></div>
            )}
         </div>
 
-        {/* Specs Dinámicas */}
         <div className="space-y-4 mb-6 border-t border-slate-100 pt-6">
           <div className="flex items-center">
-            <div className={`w-8 flex justify-center mr-3 ${isVenta || isConsumible ? 'text-green-600' : 'text-cyan-500'}`}><Icon1 size={20} /></div>
-            <div>
-              <p className="text-xs text-slate-400 font-bold uppercase">{labelVelocidad}</p>
-              <p className="text-slate-700 font-bold">{equipo.velocidad}</p>
-            </div>
+            <div className="w-8 flex justify-center mr-3 text-cyan-500"><Zap size={20} /></div>
+            <div><p className="text-xs text-slate-400 font-bold uppercase">Velocidad</p><p className="text-slate-700 font-bold">{equipo.velocidad}</p></div>
           </div>
           <div className="flex items-center">
-            <div className={`w-8 flex justify-center mr-3 ${isVenta || isConsumible ? 'text-green-600' : 'text-cyan-500'}`}><Icon2 size={20} /></div>
-            <div>
-              <p className="text-xs text-slate-400 font-bold uppercase">{labelTamano}</p>
-              <p className="text-slate-700 font-bold leading-tight">{equipo.tamano}</p>
-            </div>
+            <div className="w-8 flex justify-center mr-3 text-cyan-500"><FileText size={20} /></div>
+            <div><p className="text-xs text-slate-400 font-bold uppercase">Tamaño</p><p className="text-slate-700 font-bold">{equipo.tamano}</p></div>
           </div>
           <div className="flex items-center">
-            <div className={`w-8 flex justify-center mr-3 ${isVenta || isConsumible ? 'text-green-600' : 'text-cyan-500'}`}><Icon3 size={20} /></div>
-            <div>
-              <p className="text-xs text-slate-400 font-bold uppercase">{labelFunciones}</p>
-              <p className="text-slate-700 font-bold text-sm">{equipo.funciones}</p>
-            </div>
+            <div className="w-8 flex justify-center mr-3 text-cyan-500"><Layers size={20} /></div>
+            <div><p className="text-xs text-slate-400 font-bold uppercase">Funciones</p><p className="text-slate-700 font-bold text-sm">{equipo.funciones}</p></div>
           </div>
         </div>
 
@@ -182,24 +145,68 @@ const PrinterCard = ({ equipo }) => {
         </div>
 
         <div className="mt-auto grid grid-cols-2 gap-3">
-          <a 
-            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeInfo)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors border border-slate-200`}
-          >
+          <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeInfo)}`} target="_blank" rel="noopener noreferrer" className="bg-slate-100 hover:bg-slate-200 text-slate-600 py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors border border-slate-200">
             <Info size={16} className="mr-1" /> + INFO
           </a>
-          <a 
-            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeCotizar)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${isVenta || isConsumible ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-yellow-400 hover:bg-yellow-500 text-slate-900'} py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors shadow-md`}
-          >
-            {isVenta || isConsumible ? 'COMPRAR' : 'RENTAR'}
+          <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeCotizar)}`} target="_blank" rel="noopener noreferrer" className={`${isVenta ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-yellow-400 hover:bg-yellow-500 text-slate-900'} py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors shadow-md`}>
+            {isVenta ? 'COMPRAR' : 'RENTAR'}
           </a>
         </div>
       </div>
+    </div>
+  );
+};
+
+// --- COMPONENTE: TARJETA COMPACTA (PARA CONSUMIBLES Y REFACCIONES) ---
+const CompactProductCard = ({ item }) => {
+  const whatsappNumber = "524432796023";
+  const mensajeCompra = `Hola, me interesa el consumible *${item.modelo}* (${item.marca}).`;
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-200 p-4 flex flex-col h-full relative overflow-hidden group">
+      {/* Etiqueta pequeña de tipo */}
+      <div className="absolute top-0 right-0 bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-1 rounded-bl-lg uppercase">
+        {item.subcategoria}
+      </div>
+
+      <div className="flex items-start gap-4 mb-3">
+        {/* Imagen Pequeña */}
+        <div className="w-20 h-20 bg-slate-50 rounded-lg flex-shrink-0 flex items-center justify-center p-2 border border-slate-100">
+          {item.imagen ? (
+             <img src={item.imagen} alt={item.modelo} className="w-full h-full object-contain" onError={(e) => {e.target.onerror = null; e.target.src=""}} />
+           ) : (
+             item.subcategoria === 'toner' ? <Droplet size={32} className="text-slate-300" /> : <Box size={32} className="text-slate-300" />
+           )}
+        </div>
+        
+        {/* Info Principal */}
+        <div className="flex-1 min-w-0">
+          <p className="text-xs text-slate-400 font-bold uppercase truncate">{item.marca}</p>
+          <h4 className="text-slate-900 font-bold text-lg truncate leading-tight mb-1">{item.modelo}</h4>
+          <p className="text-xs text-slate-500 line-clamp-2 leading-tight mb-2">{item.descripcion}</p>
+          <p className="text-blue-700 font-extrabold text-xl">{item.precio} <span className="text-[10px] text-slate-400 font-normal">+IVA</span></p>
+        </div>
+      </div>
+
+      {/* Info Extra Compacta */}
+      <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-500 bg-slate-50 p-2 rounded-lg mb-3">
+        <div>
+          <span className="font-bold block text-slate-700">Para:</span> {item.tamano}
+        </div>
+        <div>
+          <span className="font-bold block text-slate-700">Rend:</span> {item.velocidad}
+        </div>
+      </div>
+
+      {/* Botón Compacto */}
+      <a 
+        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeCompra)}`}
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="mt-auto w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-bold text-xs flex items-center justify-center gap-1 transition-colors"
+      >
+        <MessageCircle size={14} /> PEDIR
+      </a>
     </div>
   );
 };
@@ -426,97 +433,104 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   );
 };
 
-// --- VISTA CONSUMIBLES (CON CATÁLOGO DINÁMICO) ---
+// --- VISTA CONSUMIBLES (OPTIMIZADA PARA 1000 ITEMS) ---
 const ConsumiblesView = ({ onBack, catalogo }) => {
-  const listaCompleta = catalogo || [];
-  
-  // FILTROS
-  const toners = listaCompleta.filter(e => e.categoria === 'consumible' && e.subcategoria === 'toner');
-  const refacciones = listaCompleta.filter(e => e.categoria === 'consumible' && e.subcategoria === 'refaccion');
-  const chips = listaCompleta.filter(e => e.categoria === 'consumible' && e.subcategoria === 'chip');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  // Filtrar solo consumibles
+  const consumiblesTodos = (catalogo || []).filter(e => e.categoria === 'consumible');
+
+  // Filtrar por búsqueda
+  const filteredItems = consumiblesTodos.filter(item => 
+    item.modelo.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    item.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (item.tamano && item.tamano.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  // Lógica de Paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+
+  // Reiniciar página al buscar
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   return (
     <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
-          <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
-        </button>
+        
+        {/* Header y Navegación */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold transition-colors">
+            <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
+          </button>
+          
+          {/* BUSCADOR POTENTE */}
+          <div className="relative w-full md:w-96">
+            <input 
+              type="text" 
+              placeholder="Buscar modelo, marca o código..." 
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 outline-none shadow-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Search className="absolute left-3 top-3.5 text-slate-400" size={20} />
+          </div>
+        </div>
         
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">Consumibles y Refacciones</h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Mantenemos tu impresora funcionando con la mejor calidad. Encuentra tóner original, genérico de alto rendimiento y las refacciones que necesitas.
-          </p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Consumibles y Refacciones</h1>
+          <p className="text-slate-600">Catálogo completo de suministros.</p>
         </div>
 
-        {/* SI HAY CONSUMIBLES EN LA LISTA, LOS MUESTRA */}
-        {(toners.length > 0 || refacciones.length > 0 || chips.length > 0) ? (
-          <div className="mb-16">
-             {/* Tóners */}
-             {toners.length > 0 && (
-                <div className="mb-12">
-                  <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center border-b pb-4 border-slate-200">
-                    <Droplet className="mr-3 text-cyan-600" /> Tóners y Tintas
-                  </h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {toners.map(item => <PrinterCard key={item.id} equipo={item} />)}
-                  </div>
-                </div>
-             )}
+        {/* GRID DE PRODUCTOS COMPACTOS */}
+        {currentItems.length > 0 ? (
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+              {currentItems.map(item => (
+                <CompactProductCard key={item.id} item={item} />
+              ))}
+            </div>
 
-             {/* Refacciones */}
-             {refacciones.length > 0 && (
-                <div className="mb-12">
-                  <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center border-b pb-4 border-slate-200">
-                    <Wrench className="mr-3 text-purple-600" /> Refacciones
-                  </h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {refacciones.map(item => <PrinterCard key={item.id} equipo={item} />)}
-                  </div>
-                </div>
-             )}
-
-             {/* Chips */}
-             {chips.length > 0 && (
-                <div className="mb-12">
-                  <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center border-b pb-4 border-slate-200">
-                    <Cpu className="mr-3 text-orange-600" /> Chips y Tambores
-                  </h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {chips.map(item => <PrinterCard key={item.id} equipo={item} />)}
-                  </div>
-                </div>
-             )}
-          </div>
+            {/* CONTROLES DE PAGINACIÓN */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-8">
+                <button 
+                  onClick={prevPage} 
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-lg font-bold flex items-center ${currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-300'}`}
+                >
+                  <ArrowLeft size={16} className="mr-2" /> Anterior
+                </button>
+                <span className="text-slate-600 font-medium">
+                  Página {currentPage} de {totalPages}
+                </span>
+                <button 
+                  onClick={nextPage} 
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-lg font-bold flex items-center ${currentPage === totalPages ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-300'}`}
+                >
+                  Siguiente <ArrowRight size={16} className="ml-2" />
+                </button>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="text-center py-12 bg-white rounded-3xl mb-12 border border-dashed border-slate-300">
-            <p className="text-slate-500">No hay consumibles registrados en el catálogo aún.</p>
+          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
+            <p className="text-slate-500 text-lg">No encontramos productos que coincidan con "{searchTerm}"</p>
+            <button onClick={() => setSearchTerm('')} className="mt-4 text-cyan-600 font-bold hover:underline">Ver todos los productos</button>
           </div>
         )}
 
-        <div className="bg-slate-900 text-white rounded-2xl p-8 mb-10">
-          <h3 className="text-2xl font-bold mb-4">Manejamos todas las marcas principales</h3>
-          <div className="flex flex-wrap gap-8 opacity-70">
-             <span className="text-xl font-bold">HP</span>
-             <span className="text-xl font-bold">BROTHER</span>
-             <span className="text-xl font-bold">EPSON</span>
-             <span className="text-xl font-bold">CANON</span>
-             <span className="text-xl font-bold">SAMSUNG</span>
-             <span className="text-xl font-bold">XEROX</span>
-             <span className="text-xl font-bold">KYOCERA</span>
-          </div>
-        </div>
-
-        <div className="text-center">
-          <a 
-            href="https://wa.me/524432796023?text=Hola,%20busco%20precio%20de%20un%20tóner%20modelo..."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-green-600 text-white px-8 py-4 rounded-full font-bold hover:bg-green-700 transition-all shadow-lg inline-flex items-center"
-          >
-            <MessageCircle className="mr-2" /> Preguntar Precio por WhatsApp
-          </a>
-        </div>
       </div>
     </section>
   );
