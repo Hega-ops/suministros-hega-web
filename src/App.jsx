@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu } from 'lucide-react';
 
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
 const DATA_INICIAL = [
@@ -36,89 +36,56 @@ const DATA_INICIAL = [
     popular: false,
     imagen: ""
   },
-  // --- RENTA COLOR ---
+  // --- CONSUMIBLES (EJEMPLOS) ---
   {
-    id: 3,
-    categoria: "renta",
-    subcategoria: "color",
-    paquete: "Paquete Color",
-    modelo: "Ecosys M5526",
-    marca: "Kyocera",
-    descripcion: "2,000 Impresiones Color",
-    precio: "$1,890",
-    velocidad: "26 ppm",
-    tamano: "Carta y Oficio",
-    funciones: "Color de alta calidad",
-    incluye: "Consumibles CMYK incluidos.",
-    popular: false,
-    imagen: ""
-  },
-  // --- VENTA USADOS ---
-  {
-    id: 4,
-    categoria: "venta",
-    subcategoria: "usado",
-    paquete: "Seminuevo Garantizado",
-    modelo: "Kyocera M2040dn",
-    marca: "Kyocera",
-    descripcion: "Equipo reacondicionado",
-    precio: "$8,500",
-    velocidad: "40 ppm",
-    tamano: "Carta y Oficio",
-    funciones: "Red, USB, Dúplex",
-    incluye: "Garantía de 3 meses.",
-    popular: false,
-    imagen: ""
-  },
-  // --- VENTA NUEVOS ---
-  {
-    id: 5,
-    categoria: "venta",
-    subcategoria: "nuevo",
-    paquete: "Equipo Nuevo",
-    modelo: "Brother DCP-L2540DW",
+    id: 10,
+    categoria: "consumible",
+    subcategoria: "toner",
+    paquete: "Genérico Premium",
+    modelo: "TN-1060",
     marca: "Brother",
-    descripcion: "Ideal Home Office",
-    precio: "$4,200",
-    velocidad: "30 ppm",
-    tamano: "Carta",
-    funciones: "Wifi, Escáner color",
-    incluye: "Tóner de inicio incluido.",
-    popular: false,
+    descripcion: "Cartucho de Tóner",
+    precio: "$180",
+    velocidad: "1,000 págs", // En consumibles esto es Rendimiento
+    tamano: "HL-1110, 1210W", // En consumibles esto es Compatibilidad
+    funciones: "Negro", // En consumibles esto es Color
+    incluye: "Garantía de rendimiento al 100%.",
+    popular: true,
     imagen: ""
   },
-  // --- REMATES (EJEMPLO) ---
   {
-    id: 6,
-    categoria: "venta",
-    subcategoria: "remate",
-    paquete: "Oportunidad",
-    modelo: "HP Laserjet Pro",
-    marca: "HP",
-    descripcion: "Última pieza",
-    precio: "$2,500",
-    velocidad: "20 ppm",
-    tamano: "Carta",
-    funciones: "Solo impresión",
-    incluye: "Sin garantía, funcionando al 100%.",
+    id: 11,
+    categoria: "consumible",
+    subcategoria: "refaccion",
+    paquete: "Original",
+    modelo: "Kit Mantenimiento MK-3160",
+    marca: "Kyocera",
+    descripcion: "Kit completo",
+    precio: "$4,200",
+    velocidad: "300,000 págs",
+    tamano: "Ecosys M3645idn",
+    funciones: "Original",
+    incluye: "Incluye unidades de revelado y tambor.",
     popular: false,
     imagen: ""
   }
 ];
 
-// --- COMPONENTE: TARJETA DE IMPRESORA ---
+// --- COMPONENTE: TARJETA DE PRODUCTO (Adapta etiquetas según si es Impresora o Consumible) ---
 const PrinterCard = ({ equipo }) => {
   const whatsappNumber = "524432796023";
   const isVenta = equipo.categoria === 'venta';
+  const isConsumible = equipo.categoria === 'consumible';
   const isRemate = equipo.subcategoria === 'remate';
   
-  const mensajeCotizar = isVenta 
-    ? `Hola, me interesa el equipo de venta *${equipo.modelo}* (${equipo.paquete}).`
-    : `Hola, me interesa cotizar la renta del equipo *${equipo.modelo}* (${equipo.paquete}).`;
+  // Textos dinámicos
+  let mensajeCotizar = `Hola, me interesa cotizar la renta del equipo *${equipo.modelo}* (${equipo.paquete}).`;
+  if (isVenta) mensajeCotizar = `Hola, me interesa comprar el equipo *${equipo.modelo}*.`;
+  if (isConsumible) mensajeCotizar = `Hola, me interesa comprar el consumible *${equipo.modelo}* para ${equipo.marca}.`;
     
-  const mensajeInfo = `Hola, necesito más información técnica sobre la *${equipo.modelo}*.`;
+  const mensajeInfo = `Hola, necesito más información técnica sobre *${equipo.modelo}*.`;
 
-  // Colores dinámicos según categoría
+  // Colores dinámicos
   let etiquetaColor = "bg-red-600";
   let etiquetaTexto = "Renta Mensual + IVA";
   let headerColor = "bg-cyan-500";
@@ -133,7 +100,21 @@ const PrinterCard = ({ equipo }) => {
       etiquetaTexto = "Precio de Venta + IVA";
       headerColor = "bg-slate-800";
     }
+  } else if (isConsumible) {
+    etiquetaColor = "bg-blue-600";
+    etiquetaTexto = "Precio Unitario + IVA";
+    headerColor = "bg-blue-500";
   }
+
+  // Etiquetas de especificaciones dinámicas
+  const labelVelocidad = isConsumible ? "Rendimiento" : "Velocidad";
+  const labelTamano = isConsumible ? "Compatibilidad" : "Tamaño";
+  const labelFunciones = isConsumible ? "Color / Tipo" : "Funciones";
+
+  // Iconos dinámicos
+  const Icon1 = isConsumible ? FileText : Zap;
+  const Icon2 = isConsumible ? Printer : FileText;
+  const Icon3 = isConsumible ? Droplet : Layers;
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all duration-300 flex flex-col relative group h-full">
@@ -166,31 +147,31 @@ const PrinterCard = ({ equipo }) => {
              />
            ) : (
              <div className="w-32 h-32 bg-slate-100 rounded-full flex items-center justify-center text-slate-300">
-               <Printer size={64} />
+               {isConsumible ? <Droplet size={64} /> : <Printer size={64} />}
              </div>
            )}
         </div>
 
-        {/* Specs */}
+        {/* Specs Dinámicas */}
         <div className="space-y-4 mb-6 border-t border-slate-100 pt-6">
           <div className="flex items-center">
-            <div className={`w-8 flex justify-center mr-3 ${isVenta ? 'text-green-600' : 'text-cyan-500'}`}><Zap size={20} /></div>
+            <div className={`w-8 flex justify-center mr-3 ${isVenta || isConsumible ? 'text-green-600' : 'text-cyan-500'}`}><Icon1 size={20} /></div>
             <div>
-              <p className="text-xs text-slate-400 font-bold uppercase">Velocidad</p>
+              <p className="text-xs text-slate-400 font-bold uppercase">{labelVelocidad}</p>
               <p className="text-slate-700 font-bold">{equipo.velocidad}</p>
             </div>
           </div>
           <div className="flex items-center">
-            <div className={`w-8 flex justify-center mr-3 ${isVenta ? 'text-green-600' : 'text-cyan-500'}`}><FileText size={20} /></div>
+            <div className={`w-8 flex justify-center mr-3 ${isVenta || isConsumible ? 'text-green-600' : 'text-cyan-500'}`}><Icon2 size={20} /></div>
             <div>
-              <p className="text-xs text-slate-400 font-bold uppercase">Tamaño</p>
-              <p className="text-slate-700 font-bold">{equipo.tamano}</p>
+              <p className="text-xs text-slate-400 font-bold uppercase">{labelTamano}</p>
+              <p className="text-slate-700 font-bold leading-tight">{equipo.tamano}</p>
             </div>
           </div>
           <div className="flex items-center">
-            <div className={`w-8 flex justify-center mr-3 ${isVenta ? 'text-green-600' : 'text-cyan-500'}`}><Layers size={20} /></div>
+            <div className={`w-8 flex justify-center mr-3 ${isVenta || isConsumible ? 'text-green-600' : 'text-cyan-500'}`}><Icon3 size={20} /></div>
             <div>
-              <p className="text-xs text-slate-400 font-bold uppercase">Funciones</p>
+              <p className="text-xs text-slate-400 font-bold uppercase">{labelFunciones}</p>
               <p className="text-slate-700 font-bold text-sm">{equipo.funciones}</p>
             </div>
           </div>
@@ -213,9 +194,9 @@ const PrinterCard = ({ equipo }) => {
             href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensajeCotizar)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={`${isVenta ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-yellow-400 hover:bg-yellow-500 text-slate-900'} py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors shadow-md`}
+            className={`${isVenta || isConsumible ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-yellow-400 hover:bg-yellow-500 text-slate-900'} py-3 rounded-lg font-bold text-sm flex items-center justify-center transition-colors shadow-md`}
           >
-            {isVenta ? 'COMPRAR' : 'RENTAR'}
+            {isVenta || isConsumible ? 'COMPRAR' : 'RENTAR'}
           </a>
         </div>
       </div>
@@ -232,7 +213,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
 
   const [form, setForm] = useState({
     categoria: 'renta', 
-    subcategoria: 'bn', // Valor por defecto
+    subcategoria: 'bn', 
     paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: ''
   });
 
@@ -247,7 +228,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
 
   const handleEdit = (item) => {
     setEditando(item.id);
-    // Asegurarnos de que tenga subcategoria si es un item viejo
     const itemConSub = {
       ...item,
       subcategoria: item.subcategoria || (item.categoria === 'renta' ? 'bn' : 'nuevo')
@@ -256,7 +236,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   };
 
   const handleDelete = (id) => {
-    if(window.confirm('¿Seguro que quieres borrar este equipo?')) {
+    if(window.confirm('¿Seguro que quieres borrar este item?')) {
       const nuevoCatalogo = catalogo.filter(item => item.id !== id);
       setCatalogo(nuevoCatalogo);
     }
@@ -271,7 +251,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     }
     setCatalogo(nuevoCatalogo);
     setEditando(null);
-    // Resetear form con valores por defecto seguros
     setForm({ categoria: 'renta', subcategoria: 'bn', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
   };
 
@@ -282,7 +261,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedCode);
-    alert('Código copiado al portapapeles. Ahora pégalo en VS Code al inicio del archivo.');
+    alert('Código copiado. Pégalo en VS Code.');
   };
 
   if (!isAuthenticated) {
@@ -307,95 +286,102 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     <div className="fixed inset-0 bg-gray-50 z-[60] overflow-y-auto">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-slate-900">Panel de Equipos</h2>
-          <button onClick={onExit} className="bg-red-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-600">Cerrar Panel</button>
+          <h2 className="text-3xl font-bold text-slate-900">Panel de Administración</h2>
+          <button onClick={onExit} className="bg-red-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-red-600">Cerrar</button>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               {editando ? <Edit size={20} /> : <Plus size={20} />} 
-              {editando ? 'Editar Equipo' : 'Agregar Nuevo Equipo'}
+              {editando ? 'Editar Item' : 'Agregar Nuevo Item'}
             </h3>
             <div className="space-y-4">
               
               {/* SELECTOR DE CATEGORÍA PRINCIPAL */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Categoría</label>
-                <div className="flex gap-4 mb-2">
+                <div className="flex gap-2 mb-2">
                   <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
-                    <input 
-                      type="radio" name="categoria" value="renta" 
-                      checked={form.categoria === 'renta'} 
-                      onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'bn'})} 
-                    />
-                    <span className="font-bold text-cyan-600">Renta Mensual</span>
+                    <input type="radio" name="categoria" value="renta" checked={form.categoria === 'renta'} onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'bn'})} />
+                    <span className="font-bold text-cyan-600 text-sm">Renta</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
-                    <input 
-                      type="radio" name="categoria" value="venta" 
-                      checked={form.categoria === 'venta'} 
-                      onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'nuevo'})} 
-                    />
-                    <span className="font-bold text-green-600">Venta Equipo</span>
+                    <input type="radio" name="categoria" value="venta" checked={form.categoria === 'venta'} onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'nuevo'})} />
+                    <span className="font-bold text-green-600 text-sm">Venta</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
+                    <input type="radio" name="categoria" value="consumible" checked={form.categoria === 'consumible'} onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'toner'})} />
+                    <span className="font-bold text-blue-600 text-sm">Consumible</span>
                   </label>
                 </div>
 
-                {/* SUB-CATEGORÍA DINÁMICA */}
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Equipo (Subcategoría)</label>
+                {/* SUBCATEGORÍA DINÁMICA */}
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo / Subcategoría</label>
                 <div className="flex gap-2 flex-wrap">
-                  {form.categoria === 'renta' ? (
+                  {form.categoria === 'renta' && (
                     <>
-                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-slate-100 rounded text-sm"><input type="radio" name="subcategoria" value="bn" checked={form.subcategoria === 'bn'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> B/N (Monocromático)</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-slate-100 rounded text-sm"><input type="radio" name="subcategoria" value="bn" checked={form.subcategoria === 'bn'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> B/N</label>
                       <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-slate-100 rounded text-sm"><input type="radio" name="subcategoria" value="color" checked={form.subcategoria === 'color'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Color</label>
                     </>
-                  ) : (
+                  )}
+                  {form.categoria === 'venta' && (
                     <>
                       <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-green-50 rounded text-sm"><input type="radio" name="subcategoria" value="nuevo" checked={form.subcategoria === 'nuevo'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Nuevo</label>
-                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-green-50 rounded text-sm"><input type="radio" name="subcategoria" value="usado" checked={form.subcategoria === 'usado'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Seminuevo/Usado</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-green-50 rounded text-sm"><input type="radio" name="subcategoria" value="usado" checked={form.subcategoria === 'usado'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Usado</label>
                       <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-purple-50 rounded text-sm text-purple-700 font-bold"><input type="radio" name="subcategoria" value="remate" checked={form.subcategoria === 'remate'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Remate</label>
+                    </>
+                  )}
+                  {form.categoria === 'consumible' && (
+                    <>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="toner" checked={form.subcategoria === 'toner'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Tóner/Tinta</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="refaccion" checked={form.subcategoria === 'refaccion'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Refacción</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="chip" checked={form.subcategoria === 'chip'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Chip/Tambor</label>
                     </>
                   )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Imagen (Nombre del archivo)</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Imagen (Nombre archivo)</label>
                 <div className="flex gap-2">
                   <div className="bg-slate-100 p-2 rounded text-slate-500"><ImageIcon size={20}/></div>
-                  <input type="text" placeholder="Ej. /m2040.png" className="flex-1 border p-2 rounded text-sm" value={form.imagen} onChange={e => setForm({...form, imagen: e.target.value})} />
+                  <input type="text" placeholder="Ej. /toner-1060.png" className="flex-1 border p-2 rounded text-sm" value={form.imagen} onChange={e => setForm({...form, imagen: e.target.value})} />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="Marca (ej. Kyocera)" className="border p-2 rounded" value={form.marca} onChange={e => setForm({...form, marca: e.target.value})} />
-                <input type="text" placeholder="Modelo (ej. Ecosys M2040)" className="border p-2 rounded" value={form.modelo} onChange={e => setForm({...form, modelo: e.target.value})} />
+                <input type="text" placeholder="Marca (Brother/Kyocera)" className="border p-2 rounded" value={form.marca} onChange={e => setForm({...form, marca: e.target.value})} />
+                <input type="text" placeholder="Modelo (TN-1060)" className="border p-2 rounded" value={form.modelo} onChange={e => setForm({...form, modelo: e.target.value})} />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <input type="text" placeholder="Nombre Paquete" className="border p-2 rounded" value={form.paquete} onChange={e => setForm({...form, paquete: e.target.value})} />
-                <input type="text" placeholder="Precio (ej. $1,245)" className="border p-2 rounded font-bold text-green-600" value={form.precio} onChange={e => setForm({...form, precio: e.target.value})} />
+                <input type="text" placeholder="Título/Paquete" className="border p-2 rounded" value={form.paquete} onChange={e => setForm({...form, paquete: e.target.value})} />
+                <input type="text" placeholder="Precio ($180)" className="border p-2 rounded font-bold text-green-600" value={form.precio} onChange={e => setForm({...form, precio: e.target.value})} />
               </div>
               <input type="text" placeholder="Descripción breve" className="w-full border p-2 rounded" value={form.descripcion} onChange={e => setForm({...form, descripcion: e.target.value})} />
-              <h4 className="font-bold text-sm text-slate-400 mt-4">Detalles Técnicos</h4>
+              
+              <h4 className="font-bold text-sm text-slate-400 mt-4">
+                {form.categoria === 'consumible' ? 'Detalles Consumible' : 'Detalles Técnicos'}
+              </h4>
               <div className="grid grid-cols-3 gap-2">
-                <input type="text" placeholder="Velocidad" className="border p-2 rounded" value={form.velocidad} onChange={e => setForm({...form, velocidad: e.target.value})} />
-                <input type="text" placeholder="Tamaño Papel" className="border p-2 rounded" value={form.tamano} onChange={e => setForm({...form, tamano: e.target.value})} />
-                <input type="text" placeholder="Funciones" className="border p-2 rounded" value={form.funciones} onChange={e => setForm({...form, funciones: e.target.value})} />
+                <input type="text" placeholder={form.categoria === 'consumible' ? "Rendimiento" : "Velocidad"} className="border p-2 rounded" value={form.velocidad} onChange={e => setForm({...form, velocidad: e.target.value})} />
+                <input type="text" placeholder={form.categoria === 'consumible' ? "Compatibilidad" : "Tamaño Papel"} className="border p-2 rounded" value={form.tamano} onChange={e => setForm({...form, tamano: e.target.value})} />
+                <input type="text" placeholder={form.categoria === 'consumible' ? "Color/Tipo" : "Funciones"} className="border p-2 rounded" value={form.funciones} onChange={e => setForm({...form, funciones: e.target.value})} />
               </div>
-              <input type="text" placeholder="¿Qué incluye?" className="w-full border p-2 rounded" value={form.incluye} onChange={e => setForm({...form, incluye: e.target.value})} />
+              <input type="text" placeholder="Garantía / Incluye" className="w-full border p-2 rounded" value={form.incluye} onChange={e => setForm({...form, incluye: e.target.value})} />
               <div className="flex gap-2 mt-4">
                 {editando && <button onClick={() => {setEditando(null); setForm({ categoria: 'renta', subcategoria: 'bn', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });}} className="px-4 py-2 bg-gray-200 rounded font-bold">Cancelar</button>}
-                <button onClick={handleSave} className="flex-1 bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700 transition-colors">{editando ? 'Actualizar Equipo' : 'Guardar Nuevo Equipo'}</button>
+                <button onClick={handleSave} className="flex-1 bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700 transition-colors">{editando ? 'Actualizar' : 'Guardar Nuevo'}</button>
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-xl font-bold mb-4">Equipos Actuales ({catalogo.length})</h3>
+            <h3 className="text-xl font-bold mb-4">Items Actuales ({catalogo.length})</h3>
             <div className="max-h-[500px] overflow-y-auto space-y-3 pr-2">
               {catalogo.map(item => (
                 <div key={item.id} className="bg-white p-4 rounded-xl border border-gray-200 flex justify-between items-center shadow-sm relative overflow-hidden">
-                  <div className={`absolute left-0 top-0 bottom-0 w-1 ${item.categoria === 'venta' ? 'bg-green-500' : 'bg-cyan-500'}`}></div>
+                  <div className={`absolute left-0 top-0 bottom-0 w-1 ${item.categoria === 'venta' ? 'bg-green-500' : item.categoria === 'consumible' ? 'bg-blue-500' : 'bg-cyan-500'}`}></div>
                   <div className="flex items-center gap-3 pl-2">
                     <div className="w-10 h-10 bg-slate-100 rounded flex items-center justify-center overflow-hidden">
                       {item.imagen ? <img src={item.imagen} alt="" className="w-full h-full object-cover"/> : <Printer size={16} className="text-slate-400"/>}
@@ -403,7 +389,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="font-bold text-slate-800">{item.modelo}</p>
-                        <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded text-white ${item.categoria === 'venta' ? 'bg-green-500' : 'bg-cyan-500'}`}>
+                        <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded text-white ${item.categoria === 'venta' ? 'bg-green-500' : item.categoria === 'consumible' ? 'bg-blue-500' : 'bg-cyan-500'}`}>
                           {item.subcategoria ? item.subcategoria : item.categoria}
                         </span>
                       </div>
@@ -437,6 +423,102 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+// --- VISTA CONSUMIBLES (CON CATÁLOGO DINÁMICO) ---
+const ConsumiblesView = ({ onBack, catalogo }) => {
+  const listaCompleta = catalogo || [];
+  
+  // FILTROS
+  const toners = listaCompleta.filter(e => e.categoria === 'consumible' && e.subcategoria === 'toner');
+  const refacciones = listaCompleta.filter(e => e.categoria === 'consumible' && e.subcategoria === 'refaccion');
+  const chips = listaCompleta.filter(e => e.categoria === 'consumible' && e.subcategoria === 'chip');
+
+  return (
+    <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
+          <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
+        </button>
+        
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-slate-900 mb-4">Consumibles y Refacciones</h1>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            Mantenemos tu impresora funcionando con la mejor calidad. Encuentra tóner original, genérico de alto rendimiento y las refacciones que necesitas.
+          </p>
+        </div>
+
+        {/* SI HAY CONSUMIBLES EN LA LISTA, LOS MUESTRA */}
+        {(toners.length > 0 || refacciones.length > 0 || chips.length > 0) ? (
+          <div className="mb-16">
+             {/* Tóners */}
+             {toners.length > 0 && (
+                <div className="mb-12">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center border-b pb-4 border-slate-200">
+                    <Droplet className="mr-3 text-cyan-600" /> Tóners y Tintas
+                  </h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {toners.map(item => <PrinterCard key={item.id} equipo={item} />)}
+                  </div>
+                </div>
+             )}
+
+             {/* Refacciones */}
+             {refacciones.length > 0 && (
+                <div className="mb-12">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center border-b pb-4 border-slate-200">
+                    <Wrench className="mr-3 text-purple-600" /> Refacciones
+                  </h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {refacciones.map(item => <PrinterCard key={item.id} equipo={item} />)}
+                  </div>
+                </div>
+             )}
+
+             {/* Chips */}
+             {chips.length > 0 && (
+                <div className="mb-12">
+                  <h3 className="text-2xl font-bold text-slate-800 mb-6 flex items-center border-b pb-4 border-slate-200">
+                    <Cpu className="mr-3 text-orange-600" /> Chips y Tambores
+                  </h3>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {chips.map(item => <PrinterCard key={item.id} equipo={item} />)}
+                  </div>
+                </div>
+             )}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-white rounded-3xl mb-12 border border-dashed border-slate-300">
+            <p className="text-slate-500">No hay consumibles registrados en el catálogo aún.</p>
+          </div>
+        )}
+
+        <div className="bg-slate-900 text-white rounded-2xl p-8 mb-10">
+          <h3 className="text-2xl font-bold mb-4">Manejamos todas las marcas principales</h3>
+          <div className="flex flex-wrap gap-8 opacity-70">
+             <span className="text-xl font-bold">HP</span>
+             <span className="text-xl font-bold">BROTHER</span>
+             <span className="text-xl font-bold">EPSON</span>
+             <span className="text-xl font-bold">CANON</span>
+             <span className="text-xl font-bold">SAMSUNG</span>
+             <span className="text-xl font-bold">XEROX</span>
+             <span className="text-xl font-bold">KYOCERA</span>
+          </div>
+        </div>
+
+        <div className="text-center">
+          <a 
+            href="https://wa.me/524432796023?text=Hola,%20busco%20precio%20de%20un%20tóner%20modelo..."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-green-600 text-white px-8 py-4 rounded-full font-bold hover:bg-green-700 transition-all shadow-lg inline-flex items-center"
+          >
+            <MessageCircle className="mr-2" /> Preguntar Precio por WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
   );
 };
 
@@ -568,15 +650,15 @@ const RentaView = ({ onBack, catalogo }) => {
   );
 };
 
-// --- RESTO DE COMPONENTES SIN CAMBIOS (HomeView, ConsumiblesView, App) ---
-// (Se incluye el código completo a continuación para que solo tengas que copiar y pegar)
-
+// --- COMPONENTE: VISTA HOME (COMPLETO) ---
 const HomeView = ({ onNavigate }) => {
   return (
     <>
+      {/* HERO SECTION */}
       <section id="inicio" className="relative pt-40 pb-20 lg:pt-56 lg:pb-32 overflow-hidden">
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-cyan-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
         <div className="absolute top-0 left-0 -ml-20 -mt-20 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-100">
@@ -599,12 +681,15 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
+
+      {/* MAIN SERVICES */}
       <section id="servicios" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Todo en un solo lugar</h2>
             <p className="text-slate-500 max-w-2xl mx-auto">Simplificamos la gestión de impresión con tres pilares fundamentales de servicio.</p>
           </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             <div onClick={() => onNavigate('consumibles')} className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100 cursor-pointer">
               <div className="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><Droplet className="text-cyan-600" size={28} /></div>
@@ -637,6 +722,8 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
+
+      {/* SEGMENTATION SECTION */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -673,6 +760,7 @@ const HomeView = ({ onNavigate }) => {
   );
 };
 
+// --- COMPONENTE PRINCIPAL (APP) ---
 const SuministrosHega = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentView, setCurrentView] = useState('home'); 
@@ -705,6 +793,7 @@ const SuministrosHega = () => {
   return (
     <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
       
+      {/* MODO ADMINISTRADOR */}
       {showAdmin && (
         <AdminPanel 
           catalogo={catalogo} 
@@ -713,6 +802,7 @@ const SuministrosHega = () => {
         />
       )}
 
+      {/* --- NAVBAR --- */}
       <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-28">
@@ -752,6 +842,7 @@ const SuministrosHega = () => {
         )}
       </nav>
 
+      {/* --- VISTAS --- */}
       {currentView === 'home' && <HomeView onNavigate={navigateTo} />}
       
       {currentView === 'renta' && (
@@ -761,11 +852,18 @@ const SuministrosHega = () => {
         />
       )}
       
-      {currentView === 'consumibles' && <ConsumiblesView onBack={() => navigateTo('home')} />}
+      {currentView === 'consumibles' && (
+        <ConsumiblesView 
+          catalogo={catalogo} // PASAMOS EL CATÁLOGO
+          onBack={() => navigateTo('home')} 
+        />
+      )}
 
+      {/* --- FOOTER --- */}
       <footer id="contacto" className="bg-slate-900 text-white pt-20 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 mb-16">
+             {/* ... Datos de contacto ... */}
              <div>
               <h2 className="text-3xl font-bold mb-6">Contáctanos</h2>
               <p className="text-slate-400 mb-8 max-w-md">Estamos listos para atenderte en nuestras sucursales o vía digital.</p>
@@ -791,6 +889,7 @@ const SuministrosHega = () => {
               </div>
             </div>
              
+             {/* ... Formulario ... */}
              <div className="bg-white rounded-2xl p-8 text-slate-900 shadow-2xl shadow-black/20">
               <h3 className="text-2xl font-bold mb-6">Envíanos un mensaje</h3>
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -810,6 +909,7 @@ const SuministrosHega = () => {
             <div className="flex space-x-6 mt-4 md:mt-0 items-center">
                <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Facebook size={20} /> HEGAsuministros</a>
                <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Instagram size={20} /> @suministroshega</a>
+               {/* BOTÓN STAFF VISIBLE */}
                <button onClick={() => setShowAdmin(true)} className="ml-4 text-slate-500 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs font-bold cursor-pointer" title="Acceso Administrativo">
                  <Lock size={14} /> Staff
                </button>
