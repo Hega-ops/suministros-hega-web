@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent } from 'lucide-react';
 
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
 const DATA_INICIAL = [
-  // --- EQUIPOS DE RENTA ---
+  // --- RENTA B/N ---
   {
     id: 1,
     categoria: "renta",
+    subcategoria: "bn",
     paquete: "Paquete Básico",
     modelo: "Ecosys M2040",
     marca: "Kyocera",
@@ -22,6 +23,7 @@ const DATA_INICIAL = [
   {
     id: 2,
     categoria: "renta",
+    subcategoria: "bn",
     paquete: "Paquete Oficina",
     modelo: "Ecosys M3145",
     marca: "Kyocera",
@@ -34,9 +36,11 @@ const DATA_INICIAL = [
     popular: false,
     imagen: ""
   },
+  // --- RENTA COLOR ---
   {
     id: 3,
     categoria: "renta",
+    subcategoria: "color",
     paquete: "Paquete Color",
     modelo: "Ecosys M5526",
     marca: "Kyocera",
@@ -49,10 +53,11 @@ const DATA_INICIAL = [
     popular: false,
     imagen: ""
   },
-  // --- EQUIPOS DE VENTA (EJEMPLOS) ---
+  // --- VENTA USADOS ---
   {
     id: 4,
     categoria: "venta",
+    subcategoria: "usado",
     paquete: "Seminuevo Garantizado",
     modelo: "Kyocera M2040dn",
     marca: "Kyocera",
@@ -65,9 +70,11 @@ const DATA_INICIAL = [
     popular: false,
     imagen: ""
   },
+  // --- VENTA NUEVOS ---
   {
     id: 5,
     categoria: "venta",
+    subcategoria: "nuevo",
     paquete: "Equipo Nuevo",
     modelo: "Brother DCP-L2540DW",
     marca: "Brother",
@@ -79,6 +86,23 @@ const DATA_INICIAL = [
     incluye: "Tóner de inicio incluido.",
     popular: false,
     imagen: ""
+  },
+  // --- REMATES (EJEMPLO) ---
+  {
+    id: 6,
+    categoria: "venta",
+    subcategoria: "remate",
+    paquete: "Oportunidad",
+    modelo: "HP Laserjet Pro",
+    marca: "HP",
+    descripcion: "Última pieza",
+    precio: "$2,500",
+    velocidad: "20 ppm",
+    tamano: "Carta",
+    funciones: "Solo impresión",
+    incluye: "Sin garantía, funcionando al 100%.",
+    popular: false,
+    imagen: ""
   }
 ];
 
@@ -86,17 +110,30 @@ const DATA_INICIAL = [
 const PrinterCard = ({ equipo }) => {
   const whatsappNumber = "524432796023";
   const isVenta = equipo.categoria === 'venta';
+  const isRemate = equipo.subcategoria === 'remate';
   
-  // Textos dinámicos según si es Renta o Venta
   const mensajeCotizar = isVenta 
-    ? `Hola, me interesa comprar el equipo *${equipo.modelo}* que vi en su web.`
+    ? `Hola, me interesa el equipo de venta *${equipo.modelo}* (${equipo.paquete}).`
     : `Hola, me interesa cotizar la renta del equipo *${equipo.modelo}* (${equipo.paquete}).`;
     
   const mensajeInfo = `Hola, necesito más información técnica sobre la *${equipo.modelo}*.`;
 
-  const etiquetaColor = isVenta ? "bg-green-600" : "bg-red-600";
-  const etiquetaTexto = isVenta ? "Precio de Venta + IVA" : "Renta Mensual + IVA";
-  const headerColor = isVenta ? "bg-slate-800" : "bg-cyan-500";
+  // Colores dinámicos según categoría
+  let etiquetaColor = "bg-red-600";
+  let etiquetaTexto = "Renta Mensual + IVA";
+  let headerColor = "bg-cyan-500";
+
+  if (isVenta) {
+    if (isRemate) {
+      etiquetaColor = "bg-purple-600";
+      etiquetaTexto = "¡Precio de Remate!";
+      headerColor = "bg-purple-800";
+    } else {
+      etiquetaColor = "bg-green-600";
+      etiquetaTexto = "Precio de Venta + IVA";
+      headerColor = "bg-slate-800";
+    }
+  }
 
   return (
     <div className="bg-white rounded-3xl overflow-hidden shadow-lg border border-slate-100 hover:shadow-2xl transition-all duration-300 flex flex-col relative group h-full">
@@ -194,7 +231,8 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   const [generatedCode, setGeneratedCode] = useState('');
 
   const [form, setForm] = useState({
-    categoria: 'renta', // Valor por defecto
+    categoria: 'renta', 
+    subcategoria: 'bn', // Valor por defecto
     paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: ''
   });
 
@@ -209,7 +247,12 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
 
   const handleEdit = (item) => {
     setEditando(item.id);
-    setForm(item);
+    // Asegurarnos de que tenga subcategoria si es un item viejo
+    const itemConSub = {
+      ...item,
+      subcategoria: item.subcategoria || (item.categoria === 'renta' ? 'bn' : 'nuevo')
+    };
+    setForm(itemConSub);
   };
 
   const handleDelete = (id) => {
@@ -228,7 +271,8 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     }
     setCatalogo(nuevoCatalogo);
     setEditando(null);
-    setForm({ categoria: 'renta', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
+    // Resetear form con valores por defecto seguros
+    setForm({ categoria: 'renta', subcategoria: 'bn', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
   };
 
   const generateCodeBlock = () => {
@@ -275,18 +319,43 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
             </h3>
             <div className="space-y-4">
               
-              {/* SELECTOR DE CATEGORÍA */}
+              {/* SELECTOR DE CATEGORÍA PRINCIPAL */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Oferta</label>
-                <div className="flex gap-4">
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Categoría</label>
+                <div className="flex gap-4 mb-2">
                   <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
-                    <input type="radio" name="categoria" value="renta" checked={form.categoria === 'renta'} onChange={e => setForm({...form, categoria: e.target.value})} />
+                    <input 
+                      type="radio" name="categoria" value="renta" 
+                      checked={form.categoria === 'renta'} 
+                      onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'bn'})} 
+                    />
                     <span className="font-bold text-cyan-600">Renta Mensual</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
-                    <input type="radio" name="categoria" value="venta" checked={form.categoria === 'venta'} onChange={e => setForm({...form, categoria: e.target.value})} />
+                    <input 
+                      type="radio" name="categoria" value="venta" 
+                      checked={form.categoria === 'venta'} 
+                      onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'nuevo'})} 
+                    />
                     <span className="font-bold text-green-600">Venta Equipo</span>
                   </label>
+                </div>
+
+                {/* SUB-CATEGORÍA DINÁMICA */}
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Equipo (Subcategoría)</label>
+                <div className="flex gap-2 flex-wrap">
+                  {form.categoria === 'renta' ? (
+                    <>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-slate-100 rounded text-sm"><input type="radio" name="subcategoria" value="bn" checked={form.subcategoria === 'bn'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> B/N (Monocromático)</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-slate-100 rounded text-sm"><input type="radio" name="subcategoria" value="color" checked={form.subcategoria === 'color'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Color</label>
+                    </>
+                  ) : (
+                    <>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-green-50 rounded text-sm"><input type="radio" name="subcategoria" value="nuevo" checked={form.subcategoria === 'nuevo'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Nuevo</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-green-50 rounded text-sm"><input type="radio" name="subcategoria" value="usado" checked={form.subcategoria === 'usado'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Seminuevo/Usado</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-purple-50 rounded text-sm text-purple-700 font-bold"><input type="radio" name="subcategoria" value="remate" checked={form.subcategoria === 'remate'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Remate</label>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -315,7 +384,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
               </div>
               <input type="text" placeholder="¿Qué incluye?" className="w-full border p-2 rounded" value={form.incluye} onChange={e => setForm({...form, incluye: e.target.value})} />
               <div className="flex gap-2 mt-4">
-                {editando && <button onClick={() => {setEditando(null); setForm({ categoria: 'renta', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });}} className="px-4 py-2 bg-gray-200 rounded font-bold">Cancelar</button>}
+                {editando && <button onClick={() => {setEditando(null); setForm({ categoria: 'renta', subcategoria: 'bn', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });}} className="px-4 py-2 bg-gray-200 rounded font-bold">Cancelar</button>}
                 <button onClick={handleSave} className="flex-1 bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700 transition-colors">{editando ? 'Actualizar Equipo' : 'Guardar Nuevo Equipo'}</button>
               </div>
             </div>
@@ -335,7 +404,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
                       <div className="flex items-center gap-2">
                         <p className="font-bold text-slate-800">{item.modelo}</p>
                         <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded text-white ${item.categoria === 'venta' ? 'bg-green-500' : 'bg-cyan-500'}`}>
-                          {item.categoria}
+                          {item.subcategoria ? item.subcategoria : item.categoria}
                         </span>
                       </div>
                       <p className="text-xs text-slate-500">{item.paquete} - <span className="text-slate-900 font-bold">{item.precio}</span></p>
@@ -371,13 +440,17 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   );
 };
 
-// --- VISTA RENTA Y VENTA (DIVIDIDA) ---
+// --- VISTA RENTA Y VENTA (DIVIDIDA POR SUBCATEGORÍAS) ---
 const RentaView = ({ onBack, catalogo }) => {
   const listaCompleta = catalogo || [];
   
-  // Filtramos los equipos en dos listas
-  const equiposRenta = listaCompleta.filter(e => e.categoria !== 'venta');
-  const equiposVenta = listaCompleta.filter(e => e.categoria === 'venta');
+  // FILTROS AVANZADOS
+  const rentaBN = listaCompleta.filter(e => e.categoria === 'renta' && e.subcategoria === 'bn');
+  const rentaColor = listaCompleta.filter(e => e.categoria === 'renta' && e.subcategoria === 'color');
+  
+  const ventaNuevos = listaCompleta.filter(e => e.categoria === 'venta' && e.subcategoria === 'nuevo');
+  const ventaUsados = listaCompleta.filter(e => e.categoria === 'venta' && e.subcategoria === 'usado');
+  const ventaRemates = listaCompleta.filter(e => e.categoria === 'venta' && e.subcategoria === 'remate');
 
   return (
     <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
@@ -393,38 +466,78 @@ const RentaView = ({ onBack, catalogo }) => {
           </p>
         </div>
 
-        {/* SECCIÓN 1: RENTA */}
-        {equiposRenta.length > 0 && (
-          <div className="mb-20">
-            <div className="flex items-center mb-8">
-              <div className="bg-cyan-500 p-2 rounded-lg mr-4 text-white"><Printer size={24} /></div>
-              <h2 className="text-2xl font-bold text-slate-800">Planes de Renta Mensual</h2>
+        {/* --- SECCIÓN RENTA --- */}
+        {(rentaBN.length > 0 || rentaColor.length > 0) && (
+          <div className="mb-16">
+            <div className="flex items-center mb-8 pb-4 border-b border-slate-200">
+              <div className="bg-cyan-500 p-2 rounded-lg mr-4 text-white"><Printer size={28} /></div>
+              <h2 className="text-3xl font-bold text-slate-800">Planes de Renta Mensual</h2>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {equiposRenta.map((equipo) => (
-                <PrinterCard key={equipo.id} equipo={equipo} />
-              ))}
-            </div>
+
+            {/* Subsección B/N */}
+            {rentaBN.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-xl font-bold text-slate-600 mb-6 flex items-center"><Box className="mr-2" size={20}/> Monocromáticos (B/N)</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {rentaBN.map(equipo => <PrinterCard key={equipo.id} equipo={equipo} />)}
+                </div>
+              </div>
+            )}
+
+            {/* Subsección Color */}
+            {rentaColor.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-xl font-bold text-slate-600 mb-6 flex items-center"><Zap className="mr-2 text-yellow-500" size={20}/> Equipos a Color</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {rentaColor.map(equipo => <PrinterCard key={equipo.id} equipo={equipo} />)}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* SECCIÓN 2: VENTA */}
-        {equiposVenta.length > 0 && (
-          <div className="mb-20 pt-8 border-t border-slate-200">
-            <div className="flex items-center mb-8">
-              <div className="bg-green-600 p-2 rounded-lg mr-4 text-white"><Tag size={24} /></div>
-              <h2 className="text-2xl font-bold text-slate-800">Equipos Disponibles para Venta</h2>
+        {/* --- SECCIÓN VENTA --- */}
+        {(ventaNuevos.length > 0 || ventaUsados.length > 0 || ventaRemates.length > 0) && (
+          <div className="mb-16 pt-8">
+            <div className="flex items-center mb-8 pb-4 border-b border-slate-200">
+              <div className="bg-green-600 p-2 rounded-lg mr-4 text-white"><Tag size={28} /></div>
+              <h2 className="text-3xl font-bold text-slate-800">Equipos Disponibles para Venta</h2>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {equiposVenta.map((equipo) => (
-                <PrinterCard key={equipo.id} equipo={equipo} />
-              ))}
-            </div>
+
+            {/* Venta Nuevos */}
+            {ventaNuevos.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-xl font-bold text-green-700 mb-6 flex items-center"><ShieldCheck className="mr-2" size={20}/> Equipos Nuevos</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {ventaNuevos.map(equipo => <PrinterCard key={equipo.id} equipo={equipo} />)}
+                </div>
+              </div>
+            )}
+
+            {/* Venta Usados */}
+            {ventaUsados.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-xl font-bold text-slate-600 mb-6 flex items-center"><Layers className="mr-2" size={20}/> Seminuevos Garantizados</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {ventaUsados.map(equipo => <PrinterCard key={equipo.id} equipo={equipo} />)}
+                </div>
+              </div>
+            )}
+
+            {/* Venta Remates */}
+            {ventaRemates.length > 0 && (
+              <div className="mb-10 p-6 bg-purple-50 rounded-3xl border border-purple-100">
+                <h3 className="text-xl font-bold text-purple-800 mb-6 flex items-center"><Percent className="mr-2" size={20}/> Zona de Remates (Oportunidades)</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {ventaRemates.map(equipo => <PrinterCard key={equipo.id} equipo={equipo} />)}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {/* Información Adicional */}
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 mt-12">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
               <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
