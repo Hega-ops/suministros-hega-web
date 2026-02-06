@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight, UploadCloud, FileJson } from 'lucide-react';
 
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
 const DATA_INICIAL = [
@@ -211,12 +211,11 @@ const CompactProductCard = ({ item }) => {
   );
 };
 
-// --- COMPONENTE: PANEL DE ADMINISTRACIÓN ---
+// --- COMPONENTE: PANEL DE ADMINISTRACIÓN (MEJORADO) ---
 const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [editando, setEditando] = useState(null);
-  const [generatedCode, setGeneratedCode] = useState('');
 
   const [form, setForm] = useState({
     categoria: 'renta', 
@@ -261,14 +260,40 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     setForm({ categoria: 'renta', subcategoria: 'bn', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
   };
 
-  const generateCodeBlock = () => {
-    const code = `const DATA_INICIAL = ${JSON.stringify(catalogo, null, 2)};`;
-    setGeneratedCode(code);
+  // --- NUEVAS FUNCIONES DE IMPORTAR/EXPORTAR ---
+  const handleDownloadJSON = () => {
+    const dataStr = JSON.stringify(catalogo, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.download = `backup_hega_${new Date().toISOString().slice(0,10)}.json`;
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedCode);
-    alert('Código copiado. Pégalo en VS Code.');
+  const handleFileUpload = (e) => {
+    const fileReader = new FileReader();
+    if(e.target.files[0]){
+      fileReader.readAsText(e.target.files[0], "UTF-8");
+      fileReader.onload = (event) => {
+        try {
+          const json = JSON.parse(event.target.result);
+          if (Array.isArray(json)) {
+            if(window.confirm(`Se cargarán ${json.length} productos. Esto reemplazará el catálogo actual. ¿Continuar?`)){
+                setCatalogo(json);
+                alert("¡Carga masiva exitosa!");
+            }
+          } else {
+            alert("El archivo no tiene el formato correcto (debe ser un array).");
+          }
+        } catch (error) {
+          alert("Error al leer el archivo JSON.");
+        }
+      };
+    }
   };
 
   if (!isAuthenticated) {
@@ -298,6 +323,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
+          {/* COLUMNA IZQUIERDA: FORMULARIO */}
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               {editando ? <Edit size={20} /> : <Plus size={20} />} 
@@ -383,6 +409,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
             </div>
           </div>
 
+          {/* COLUMNA DERECHA: LISTADO */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold mb-4">Items Actuales ({catalogo.length})</h3>
             <div className="max-h-[500px] overflow-y-auto space-y-3 pr-2">
@@ -413,20 +440,42 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
           </div>
         </div>
 
+        {/* --- NUEVA SECCIÓN DE GESTIÓN DE DATOS (IMPORT/EXPORT) --- */}
         <div className="mt-12 bg-slate-900 text-white p-8 rounded-2xl">
-          <div className="flex justify-between items-center mb-4">
-            <div>
-              <h3 className="text-xl font-bold text-yellow-400 flex items-center gap-2"><Save size={20}/> Guardar Cambios</h3>
-              <p className="text-slate-400 text-sm">Copia el código generado y pégalo en VS Code.</p>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            
+            {/* SECCIÓN DE EXPORTAR (BACKUP) */}
+            <div className="flex-1 w-full">
+              <h3 className="text-xl font-bold text-yellow-400 flex items-center gap-2 mb-2">
+                <Save size={20}/> Respaldo y Exportación
+              </h3>
+              <p className="text-slate-400 text-sm mb-4">
+                Descarga tu catálogo actual como un archivo <code>.json</code>. <br/> Úsalo como copia de seguridad o para editar masivamente en Excel/Editor.
+              </p>
+              <button 
+                onClick={handleDownloadJSON} 
+                className="bg-cyan-600 w-full md:w-auto px-6 py-3 rounded-lg font-bold hover:bg-cyan-500 flex items-center justify-center gap-2 transition-all"
+              >
+                <ArrowRight size={18} className="rotate-90" /> Descargar Catálogo (.json)
+              </button>
             </div>
-            <button onClick={generateCodeBlock} className="bg-cyan-600 px-6 py-2 rounded-lg font-bold hover:bg-cyan-500">Generar Código</button>
+
+            {/* SECCIÓN DE IMPORTAR (CARGA MASIVA) */}
+            <div className="flex-1 w-full border-t md:border-t-0 md:border-l border-slate-700 pt-6 md:pt-0 md:pl-8">
+              <h3 className="text-xl font-bold text-green-400 flex items-center gap-2 mb-2">
+                <FileJson size={20}/> Carga Masiva (Excel/JSON)
+              </h3>
+              <p className="text-slate-400 text-sm mb-4">
+                Sube un archivo <code>.json</code> para reemplazar toda la base de datos al instante. Ideal para actualizar listas de precios o agregar consumibles.
+              </p>
+              <label className="bg-slate-800 hover:bg-slate-700 border border-slate-600 border-dashed w-full md:w-auto px-6 py-3 rounded-lg font-bold cursor-pointer flex items-center justify-center gap-2 transition-all group">
+                <UploadCloud size={20} className="text-green-500 group-hover:scale-110 transition-transform"/> 
+                <span>Seleccionar Archivo JSON</span>
+                <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
+              </label>
+            </div>
+
           </div>
-          {generatedCode && (
-            <div className="relative">
-              <textarea className="w-full h-40 bg-slate-800 p-4 rounded-lg font-mono text-xs text-green-400 border border-slate-700 focus:outline-none" readOnly value={generatedCode} />
-              <button onClick={copyToClipboard} className="absolute top-4 right-4 bg-white text-slate-900 px-4 py-2 rounded font-bold text-xs flex items-center gap-2 hover:bg-gray-200"><Copy size={14}/> Copiar</button>
-            </div>
-          )}
         </div>
       </div>
     </div>
