@@ -687,12 +687,8 @@ const PromoRollosBanner = () => {
                  className="w-full h-full object-cover"
                  onError={(e) => {
                     e.target.onerror = null;
-                    e.target.style.display = 'none';
-                    e.target.parentNode.classList.add('flex', 'items-center', 'justify-center', 'bg-slate-200');
-                    // Inyectamos un icono de fallback si la imagen falla
-                    const icon = document.createElement('div');
-                    icon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2a10 10 0 0 0-10-10H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/></svg>';
-                    e.target.parentNode.appendChild(icon);
+                    // FALLBACK: Si no encuentra la imagen local, carga una de internet que se vea bien
+                    e.target.src = "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&q=80&w=400";
                  }} 
                />
                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
