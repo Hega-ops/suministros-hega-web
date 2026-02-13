@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight, UploadCloud, FileJson } from 'lucide-react';
+import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight, ScrollText } from 'lucide-react';
 
 // --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
 const DATA_INICIAL = [
@@ -211,11 +211,12 @@ const CompactProductCard = ({ item }) => {
   );
 };
 
-// --- COMPONENTE: PANEL DE ADMINISTRACIÓN (MEJORADO) ---
+// --- COMPONENTE: PANEL DE ADMINISTRACIÓN ---
 const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [editando, setEditando] = useState(null);
+  const [generatedCode, setGeneratedCode] = useState('');
 
   const [form, setForm] = useState({
     categoria: 'renta', 
@@ -260,40 +261,14 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     setForm({ categoria: 'renta', subcategoria: 'bn', paquete: '', modelo: '', marca: '', descripcion: '', precio: '', velocidad: '', tamano: '', funciones: '', incluye: '', imagen: '' });
   };
 
-  // --- NUEVAS FUNCIONES DE IMPORTAR/EXPORTAR ---
-  const handleDownloadJSON = () => {
-    const dataStr = JSON.stringify(catalogo, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
-    link.download = `backup_hega_${new Date().toISOString().slice(0,10)}.json`;
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const generateCodeBlock = () => {
+    const code = `const DATA_INICIAL = ${JSON.stringify(catalogo, null, 2)};`;
+    setGeneratedCode(code);
   };
 
-  const handleFileUpload = (e) => {
-    const fileReader = new FileReader();
-    if(e.target.files[0]){
-      fileReader.readAsText(e.target.files[0], "UTF-8");
-      fileReader.onload = (event) => {
-        try {
-          const json = JSON.parse(event.target.result);
-          if (Array.isArray(json)) {
-            if(window.confirm(`Se cargarán ${json.length} productos. Esto reemplazará el catálogo actual. ¿Continuar?`)){
-                setCatalogo(json);
-                alert("¡Carga masiva exitosa!");
-            }
-          } else {
-            alert("El archivo no tiene el formato correcto (debe ser un array).");
-          }
-        } catch (error) {
-          alert("Error al leer el archivo JSON.");
-        }
-      };
-    }
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedCode);
+    alert('Código copiado. Pégalo en VS Code.');
   };
 
   if (!isAuthenticated) {
@@ -323,7 +298,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* COLUMNA IZQUIERDA: FORMULARIO */}
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               {editando ? <Edit size={20} /> : <Plus size={20} />} 
@@ -409,7 +383,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
             </div>
           </div>
 
-          {/* COLUMNA DERECHA: LISTADO */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold mb-4">Items Actuales ({catalogo.length})</h3>
             <div className="max-h-[500px] overflow-y-auto space-y-3 pr-2">
@@ -440,42 +413,20 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
           </div>
         </div>
 
-        {/* --- NUEVA SECCIÓN DE GESTIÓN DE DATOS (IMPORT/EXPORT) --- */}
         <div className="mt-12 bg-slate-900 text-white p-8 rounded-2xl">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            
-            {/* SECCIÓN DE EXPORTAR (BACKUP) */}
-            <div className="flex-1 w-full">
-              <h3 className="text-xl font-bold text-yellow-400 flex items-center gap-2 mb-2">
-                <Save size={20}/> Respaldo y Exportación
-              </h3>
-              <p className="text-slate-400 text-sm mb-4">
-                Descarga tu catálogo actual como un archivo <code>.json</code>. <br/> Úsalo como copia de seguridad o para editar masivamente en Excel/Editor.
-              </p>
-              <button 
-                onClick={handleDownloadJSON} 
-                className="bg-cyan-600 w-full md:w-auto px-6 py-3 rounded-lg font-bold hover:bg-cyan-500 flex items-center justify-center gap-2 transition-all"
-              >
-                <ArrowRight size={18} className="rotate-90" /> Descargar Catálogo (.json)
-              </button>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h3 className="text-xl font-bold text-yellow-400 flex items-center gap-2"><Save size={20}/> Guardar Cambios</h3>
+              <p className="text-slate-400 text-sm">Copia el código generado y pégalo en VS Code.</p>
             </div>
-
-            {/* SECCIÓN DE IMPORTAR (CARGA MASIVA) */}
-            <div className="flex-1 w-full border-t md:border-t-0 md:border-l border-slate-700 pt-6 md:pt-0 md:pl-8">
-              <h3 className="text-xl font-bold text-green-400 flex items-center gap-2 mb-2">
-                <FileJson size={20}/> Carga Masiva (Excel/JSON)
-              </h3>
-              <p className="text-slate-400 text-sm mb-4">
-                Sube un archivo <code>.json</code> para reemplazar toda la base de datos al instante. Ideal para actualizar listas de precios o agregar consumibles.
-              </p>
-              <label className="bg-slate-800 hover:bg-slate-700 border border-slate-600 border-dashed w-full md:w-auto px-6 py-3 rounded-lg font-bold cursor-pointer flex items-center justify-center gap-2 transition-all group">
-                <UploadCloud size={20} className="text-green-500 group-hover:scale-110 transition-transform"/> 
-                <span>Seleccionar Archivo JSON</span>
-                <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
-              </label>
-            </div>
-
+            <button onClick={generateCodeBlock} className="bg-cyan-600 px-6 py-2 rounded-lg font-bold hover:bg-cyan-500">Generar Código</button>
           </div>
+          {generatedCode && (
+            <div className="relative">
+              <textarea className="w-full h-40 bg-slate-800 p-4 rounded-lg font-mono text-xs text-green-400 border border-slate-700 focus:outline-none" readOnly value={generatedCode} />
+              <button onClick={copyToClipboard} className="absolute top-4 right-4 bg-white text-slate-900 px-4 py-2 rounded font-bold text-xs flex items-center gap-2 hover:bg-gray-200"><Copy size={14}/> Copiar</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -713,6 +664,76 @@ const RentaView = ({ onBack, catalogo }) => {
   );
 };
 
+// --- COMPONENTE: BANNER PROMOCIONAL ROLLOS ---
+const PromoRollosBanner = () => {
+  const mensajeRollos = "Hola, me interesa cotizar rollos para miniprinter.";
+  
+  return (
+    <div className="bg-gradient-to-r from-blue-900 via-slate-900 to-cyan-900 text-white py-12 relative overflow-hidden">
+      {/* Elementos decorativos de fondo */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
+      <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl -ml-10 -mb-10"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          
+          <div className="flex items-center md:items-start gap-6">
+            {/* IMAGEN REAL MEJORADA */}
+            <div className="w-32 h-32 md:w-40 md:h-40 relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 transform hover:scale-105 transition-transform duration-500 shrink-0 bg-white">
+               {/* Usamos un fallback visual con icono si la imagen falla, y quitamos el 'hidden' en móvil */}
+               <img 
+                 src="/rollos-promo.jpg" 
+                 alt="Miniprinter y Rollos" 
+                 className="w-full h-full object-cover"
+                 onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.style.display = 'none';
+                    e.target.parentNode.classList.add('flex', 'items-center', 'justify-center', 'bg-slate-200');
+                    // Inyectamos un icono de fallback si la imagen falla
+                    const icon = document.createElement('div');
+                    icon.innerHTML = '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2a10 10 0 0 0-10-10H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/></svg>';
+                    e.target.parentNode.appendChild(icon);
+                 }} 
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+            </div>
+            
+            <div className="text-center md:text-left">
+              <div className="inline-block px-3 py-1 bg-yellow-400 text-slate-900 text-xs font-extrabold rounded-full mb-3 shadow-md uppercase tracking-wide">
+                ¡Nuevo en Hega!
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-2 leading-tight">
+                Rollos para Miniprinter
+              </h2>
+              <p className="text-cyan-100 text-lg max-w-xl">
+                Térmicos y Bond. Todas las medidas disponibles para tu punto de venta (57mm, 80mm y más).
+              </p>
+            </div>
+          </div>
+
+          <div className="flex-shrink-0 w-full md:w-auto">
+            <a 
+              href={`https://wa.me/524432796023?text=${encodeURIComponent(mensajeRollos)}`}
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group bg-white text-slate-900 hover:bg-cyan-50 px-8 py-4 rounded-xl font-bold shadow-xl transition-all flex items-center justify-center gap-3 w-full md:w-auto"
+            >
+              <span className="flex flex-col items-start text-left leading-tight">
+                <span className="text-xs text-slate-500 uppercase">Solicitar cotización</span>
+                <span className="text-lg">Pedir Rollos</span>
+              </span>
+              <div className="bg-slate-100 p-2 rounded-lg group-hover:bg-white transition-colors">
+                 <ArrowRight size={20} className="text-cyan-600" />
+              </div>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- COMPONENTE: VISTA HOME (COMPLETO) ---
 const HomeView = ({ onNavigate }) => {
   return (
@@ -785,6 +806,9 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
+
+      {/* BANNER PROMOCIONAL - ROLLOS */}
+      <PromoRollosBanner />
 
       {/* SEGMENTATION SECTION */}
       <section className="py-20 bg-slate-50">
