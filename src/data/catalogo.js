@@ -67,7 +67,7 @@ export const DATA_INICIAL = [
   {
     id: 102,
     categoria: "consumible",
-    subcategoria: "toner",
+    subcategoria: "toner generico",
     paquete: "Genérico",
     modelo: "TN-760",
     marca: "Brother",
