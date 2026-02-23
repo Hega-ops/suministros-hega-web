@@ -92,7 +92,7 @@ export const DATA_INICIAL = [
     tamano: "HL-L5210DN, H...",
     funciones: "Negro",
     incluye: "Garantía",
-    imagen: "/tn-920xxl.jpeg"
+    imagen: "/tn-920xxl.jpg"
   },
   {
     id: 104,
@@ -137,7 +137,7 @@ export const DATA_INICIAL = [
     tamano: "HP LaserJet P...",
     funciones: "Negro",
     incluye: "Garantía",
-    imagen: "/w1500a.jpeg"
+    imagen: "/w1500a.jpg"
   },
   {
     id: 107,
