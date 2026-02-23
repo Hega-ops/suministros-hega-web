@@ -1,6 +1,5 @@
-// Archivo: src/data/catalogo.js
-
 export const DATA_INICIAL = [
+  // --- IMPRESORAS (RENTA/VENTA) ---
   {
     id: 1,
     categoria: "renta",
@@ -33,6 +32,8 @@ export const DATA_INICIAL = [
     popular: false,
     imagen: ""
   },
+
+  // --- CONSUMIBLES (NUEVA CARGA) ---
   {
     id: 100,
     categoria: "consumible",
@@ -77,5 +78,80 @@ export const DATA_INICIAL = [
     funciones: "Negro",
     incluye: "Garantía",
     imagen: "/tn-760.jpg"
+  },
+  {
+    id: 103,
+    categoria: "consumible",
+    subcategoria: "toner",
+    paquete: "Genérico",
+    modelo: "TN-920XXL",
+    marca: "Brother",
+    descripcion: "Cartucho de Tóner",
+    precio: "$790",
+    velocidad: "18,000 págs",
+    tamano: "HL-L5210DN, H...",
+    funciones: "Negro",
+    incluye: "Garantía",
+    imagen: "/tn-920xxl.jpeg"
+  },
+  {
+    id: 104,
+    categoria: "consumible",
+    subcategoria: "toner",
+    paquete: "Genérico",
+    modelo: "CB285A",
+    marca: "HP",
+    descripcion: "Cartucho de Tóner",
+    precio: "$350",
+    velocidad: "1,600 págs",
+    tamano: "HP LaserJet P...",
+    funciones: "Negro",
+    incluye: "Garantía",
+    imagen: "/cb285a.jpg"
+  },
+  {
+    id: 105,
+    categoria: "consumible",
+    subcategoria: "toner",
+    paquete: "Genérico",
+    modelo: "W1105A",
+    marca: "HP",
+    descripcion: "Cartucho de Tóner",
+    precio: "$350",
+    velocidad: "1,600 págs",
+    tamano: "HP LaserJet P...",
+    funciones: "Negro",
+    incluye: "Garantía",
+    imagen: "/w1105a.png"
+  },
+  {
+    id: 106,
+    categoria: "consumible",
+    subcategoria: "toner",
+    paquete: "Genérico",
+    modelo: "W1500A",
+    marca: "HP",
+    descripcion: "Cartucho de Tóner",
+    precio: "$350",
+    velocidad: "1,600 págs",
+    tamano: "HP LaserJet P...",
+    funciones: "Negro",
+    incluye: "Garantía",
+    imagen: "/w1500a.jpeg"
+  },
+  {
+    id: 107,
+    categoria: "consumible",
+    subcategoria: "toner",
+    paquete: "Genérico",
+    modelo: "CF217A",
+    marca: "HP",
+    descripcion: "Cartucho de Tóner",
+    precio: "$350",
+    velocidad: "1,600 págs",
+    tamano: "HP LaserJet P...",
+    funciones: "Negro",
+    incluye: "Garantía",
+    imagen: "/cf217a.webp"
   }
 ];
