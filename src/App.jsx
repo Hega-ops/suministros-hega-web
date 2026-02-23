@@ -1,87 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight, ScrollText, UploadCloud, FileJson } from 'lucide-react';
 
-// --- CONFIGURACIÓN INICIAL DEL CATÁLOGO ---
-const DATA_INICIAL = [
-  // --- RENTA B/N ---
-{
-    "id": 1,
-    "categoria": "renta",
-    "subcategoria": "bn",
-    "paquete": "Paquete Básico",
-    "modelo": "Ecosys M2040",
-    "marca": "Kyocera",
-    "descripcion": "3,000 Impresiones B/N",
-    "precio": "$1,245",
-    "velocidad": "42 ppm",
-    "tamano": "Carta y Oficio",
-    "funciones": "Copia, imprime, escanea",
-    "incluye": "Tóner, consumibles y refacciones incluidos.",
-    "popular": true,
-    "imagen": ""
-  },
-  {
-    "id": 2,
-    "categoria": "renta",
-    "subcategoria": "bn",
-    "paquete": "Paquete Oficina",
-    "modelo": "Ecosys M3145",
-    "marca": "Kyocera",
-    "descripcion": "5,000 Impresiones B/N",
-    "precio": "$1,550",
-    "velocidad": "45 ppm",
-    "tamano": "Carta y Oficio",
-    "funciones": "Full Dúplex, Red, USB",
-    "incluye": "Servicio correctivo en < 24hrs.",
-    "popular": false,
-    "imagen": ""
-  },
-  {
-    "id": 100,
-    "categoria": "consumible",
-    "subcategoria": "toner",
-    "paquete": "Genérico",
-    "modelo": "TN-1060",
-    "marca": "Brother",
-    "descripcion": "Cartucho de Tóner",
-    "precio": "$300",
-    "velocidad": "1,000 págs",
-    "tamano": "DCP-1617nw, HL-1...",
-    "funciones": "Negro",
-    "incluye": "Garantía",
-    "imagen": "/tn-1060.jpg"
-  },
-  {
-    "id": 101,
-    "categoria": "consumible",
-    "subcategoria": "toner",
-    "paquete": "Genérico",
-    "modelo": "TN-660",
-    "marca": "Brother",
-    "descripcion": "Cartucho de Tóner",
-    "precio": "$350",
-    "velocidad": "2,000 págs",
-    "tamano": "L-L2300D, HL-L...",
-    "funciones": "Negro",
-    "incluye": "Garantía",
-    "imagen": "/tn-660.jpg"
-  },
-  {
-    "id": 102,
-    "categoria": "consumible",
-    "subcategoria": "toner",
-    "paquete": "Genérico",
-    "modelo": "TN-760",
-    "marca": "Brother",
-    "descripcion": "Cartucho de Tóner",
-    "precio": "$350",
-    "velocidad": "2,600 págs",
-    "tamano": "MFC-L2710DW",
-    "funciones": "Negro",
-    "incluye": "Garantía",
-    "imagen": "/tn-760.jpg"
-  }
-];
+// IMPORTAMOS LA BASE DE DATOS DESDE NUESTRO NUEVO ARCHIVO
+import { DATA_INICIAL } from './data/catalogo';
 
 // --- COMPONENTE: TARJETA GRANDE (PARA IMPRESORAS) ---
 const PrinterCard = ({ equipo }) => {
