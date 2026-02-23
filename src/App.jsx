@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight, ScrollText, UploadCloud, FileJson } from 'lucide-react';
 
 // IMPORTAMOS LA BASE DE DATOS DESDE NUESTRO NUEVO ARCHIVO
-import { DATA_INICIAL } from './data/catalogo';
+import { IMPRESORAS } from './data/impresoras';
+import { CONSUMIBLES } from './data/consumibles';
+
+// Unimos ambas listas en una sola para que la página funcione igual
+const DATA_INICIAL = [...IMPRESORAS, ...CONSUMIBLES];
 
 // --- COMPONENTE: TARJETA GRANDE (PARA IMPRESORAS) ---
 const PrinterCard = ({ equipo }) => {
