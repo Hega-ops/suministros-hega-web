@@ -208,7 +208,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
     alert('Código copiado. Pégalo en VS Code.');
   };
 
-  // --- FUNCIONES DE IMPORTAR/EXPORTAR ---
   const handleDownloadJSON = () => {
     const dataStr = JSON.stringify(catalogo, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
@@ -278,7 +277,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
             </h3>
             <div className="space-y-4">
               
-              {/* SELECTOR DE CATEGORÍA PRINCIPAL */}
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Categoría</label>
                 <div className="flex gap-2 mb-2">
@@ -296,7 +294,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
                   </label>
                 </div>
 
-                {/* SUBCATEGORÍA DINÁMICA ACTUALIZADA */}
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo / Subcategoría</label>
                 <div className="flex gap-2 flex-wrap">
                   {form.categoria === 'renta' && (
@@ -386,7 +383,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
           </div>
         </div>
 
-        {/* --- NUEVA SECCIÓN DE GESTIÓN DE DATOS (IMPORT/EXPORT) --- */}
+        {/* --- SECCIÓN DE GESTIÓN DE DATOS (IMPORT/EXPORT) --- */}
         <div className="mt-12 bg-slate-900 text-white p-8 rounded-2xl">
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -403,8 +400,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
           )}
 
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 border-t border-slate-700 pt-8">
-            
-            {/* SECCIÓN DE EXPORTAR (BACKUP) */}
             <div className="flex-1 w-full">
               <h3 className="text-xl font-bold text-yellow-400 flex items-center gap-2 mb-2">
                 <Save size={20}/> Respaldo (.json)
@@ -420,7 +415,6 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
               </button>
             </div>
 
-            {/* SECCIÓN DE IMPORTAR (CARGA MASIVA) */}
             <div className="flex-1 w-full border-t md:border-t-0 md:border-l border-slate-700 pt-6 md:pt-0 md:pl-8">
               <h3 className="text-xl font-bold text-green-400 flex items-center gap-2 mb-2">
                 <FileJson size={20}/> Carga Masiva (.json)
@@ -444,30 +438,25 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
 // --- VISTA CONSUMIBLES (MEJORADA CON FILTROS Y MARCAS) ---
 const ConsumiblesView = ({ onBack, catalogo }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('toner Genérico'); // Pestaña por defecto
-  const [activeBrand, setActiveBrand] = useState('Todos');      // Marca por defecto
+  const [activeTab, setActiveTab] = useState('toner Genérico');
+  const [activeBrand, setActiveBrand] = useState('Todos');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  // 1. Filtrar TODOS los consumibles
   const consumiblesTodos = (catalogo || []).filter(e => e.categoria === 'consumible');
 
-  // 2. Filtrar por PESTAÑA (Subcategoría)
   const porPestana = consumiblesTodos.filter(item => {
     if (activeTab === 'Todos') return true;
     return item.subcategoria && item.subcategoria.toLowerCase() === activeTab.toLowerCase();
   });
 
-  // 3. Extraer las MARCAS dinámicamente de lo que hay en la pestaña actual
   const marcasDisponibles = ['Todos', ...new Set(porPestana.map(item => item.marca))].filter(Boolean);
 
-  // 4. Filtrar por MARCA
   const porMarca = porPestana.filter(item => {
     if (activeBrand === 'Todos') return true;
     return item.marca && item.marca.toLowerCase() === activeBrand.toLowerCase();
   });
 
-  // 5. Filtrar por BÚSQUEDA TEXTUAL
   const filteredItems = porMarca.filter(item => 
     item.modelo.toLowerCase().includes(searchTerm.toLowerCase()) || 
     item.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -475,19 +464,15 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
     (item.tamano && item.tamano.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // --- EFECTOS ---
-  // Si cambia la pestaña, la marca se resetea a 'Todos' y vamos a la página 1
   useEffect(() => {
     setActiveBrand('Todos');
     setCurrentPage(1);
   }, [activeTab]);
 
-  // Si buscamos o cambiamos de marca, volvemos a la página 1
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, activeBrand]);
 
-  // --- PAGINACIÓN ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
@@ -500,13 +485,11 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
     <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Header y Navegación */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold transition-colors">
             <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
           </button>
           
-          {/* BUSCADOR POTENTE */}
           <div className="relative w-full md:w-96">
             <input 
               type="text" 
@@ -524,7 +507,6 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           <p className="text-slate-600">Encuentra el suministro exacto para tu equipo.</p>
         </div>
 
-        {/* --- PESTAÑAS DE CATEGORÍA --- */}
         <div className="flex justify-center flex-wrap gap-3 mb-6">
           {['toner Genérico', 'toner Original', 'refaccion', 'Todos'].map(tab => (
             <button
@@ -543,8 +525,6 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           ))}
         </div>
 
-        {/* --- FILTRO DE MARCAS (PÍLDORAS) --- */}
-        {/* Solo mostramos el menú de marcas si hay más de 1 marca disponible */}
         {marcasDisponibles.length > 1 && (
           <div className="flex justify-center flex-wrap gap-2 mb-10 bg-white p-2 rounded-2xl shadow-sm border border-slate-100 max-w-fit mx-auto">
             {marcasDisponibles.map(marca => (
@@ -563,7 +543,6 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           </div>
         )}
 
-        {/* GRID DE PRODUCTOS COMPACTOS */}
         {currentItems.length > 0 ? (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
@@ -572,7 +551,6 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
               ))}
             </div>
 
-            {/* CONTROLES DE PAGINACIÓN */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-4 mt-8">
                 <button 
@@ -644,7 +622,6 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
 const RentaView = ({ onBack, catalogo }) => {
   const listaCompleta = catalogo || [];
   
-  // FILTROS AVANZADOS
   const rentaBN = listaCompleta.filter(e => e.categoria === 'renta' && e.subcategoria === 'bn');
   const rentaColor = listaCompleta.filter(e => e.categoria === 'renta' && e.subcategoria === 'color');
   
@@ -674,7 +651,6 @@ const RentaView = ({ onBack, catalogo }) => {
               <h2 className="text-3xl font-bold text-slate-800">Planes de Renta Mensual</h2>
             </div>
 
-            {/* Subsección B/N */}
             {rentaBN.length > 0 && (
               <div className="mb-10">
                 <h3 className="text-xl font-bold text-slate-600 mb-6 flex items-center"><Box className="mr-2" size={20}/> Monocromáticos (B/N)</h3>
@@ -684,7 +660,6 @@ const RentaView = ({ onBack, catalogo }) => {
               </div>
             )}
 
-            {/* Subsección Color */}
             {rentaColor.length > 0 && (
               <div className="mb-10">
                 <h3 className="text-xl font-bold text-slate-600 mb-6 flex items-center"><Zap className="mr-2 text-yellow-500" size={20}/> Equipos a Color</h3>
@@ -704,7 +679,6 @@ const RentaView = ({ onBack, catalogo }) => {
               <h2 className="text-3xl font-bold text-slate-800">Equipos Disponibles para Venta</h2>
             </div>
 
-            {/* Venta Nuevos */}
             {ventaNuevos.length > 0 && (
               <div className="mb-10">
                 <h3 className="text-xl font-bold text-green-700 mb-6 flex items-center"><ShieldCheck className="mr-2" size={20}/> Equipos Nuevos</h3>
@@ -714,7 +688,6 @@ const RentaView = ({ onBack, catalogo }) => {
               </div>
             )}
 
-            {/* Venta Usados */}
             {ventaUsados.length > 0 && (
               <div className="mb-10">
                 <h3 className="text-xl font-bold text-slate-600 mb-6 flex items-center"><Layers className="mr-2" size={20}/> Seminuevos Garantizados</h3>
@@ -724,7 +697,6 @@ const RentaView = ({ onBack, catalogo }) => {
               </div>
             )}
 
-            {/* Venta Remates */}
             {ventaRemates.length > 0 && (
               <div className="mb-10 p-6 bg-purple-50 rounded-3xl border border-purple-100">
                 <h3 className="text-xl font-bold text-purple-800 mb-6 flex items-center"><Percent className="mr-2" size={20}/> Zona de Remates (Oportunidades)</h3>
@@ -784,14 +756,12 @@ const PromoRollosBanner = () => {
           <div className="flex items-center md:items-start gap-6">
             {/* IMAGEN REAL MEJORADA */}
             <div className="w-32 h-32 md:w-40 md:h-40 relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white/10 rotate-3 transform hover:scale-105 transition-transform duration-500 shrink-0 bg-white">
-               {/* Usamos un fallback visual con icono si la imagen falla, y quitamos el 'hidden' en móvil */}
                <img 
                  src="/rollos-promo.jpg" 
                  alt="Miniprinter y Rollos" 
                  className="w-full h-full object-contain p-2"
                  onError={(e) => {
                     e.target.onerror = null;
-                    // FALLBACK: Si no encuentra la imagen local, carga una de internet que se vea bien
                     e.target.src = "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&q=80&w=400";
                  }} 
                />
@@ -906,6 +876,9 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
+
+      {/* BANNER PROMOCIONAL - ROLLOS AHORA VISIBLE AQUÍ */}
+      <PromoRollosBanner />
 
       {/* SEGMENTATION SECTION */}
       <section className="py-20 bg-slate-50">
