@@ -107,12 +107,16 @@ const CompactProductCard = ({ item }) => {
       </div>
 
       <div className="flex items-start gap-4 mb-3">
-        {/* Imagen Pequeña */}
+        {/* Imagen Pequeña con Lógica de Iconos */}
         <div className="w-20 h-20 bg-slate-50 rounded-lg flex-shrink-0 flex items-center justify-center p-2 border border-slate-100">
           {item.imagen ? (
              <img src={item.imagen} alt={item.modelo} className="w-full h-full object-contain" onError={(e) => {e.target.onerror = null; e.target.src=""}} />
            ) : (
-             item.subcategoria?.includes('toner') ? <Droplet size={32} className="text-slate-300" /> : <Box size={32} className="text-slate-300" />
+             item.subcategoria?.includes('toner') ? <Droplet size={32} className="text-slate-300" /> : 
+             item.subcategoria?.includes('rollo') ? <ScrollText size={32} className="text-slate-300" /> : 
+             item.subcategoria?.includes('papel') ? <FileText size={32} className="text-slate-300" /> : 
+             item.subcategoria?.includes('etiqueta') ? <Tag size={32} className="text-slate-300" /> : 
+             <Box size={32} className="text-slate-300" />
            )}
         </div>
         
@@ -148,7 +152,7 @@ const CompactProductCard = ({ item }) => {
   );
 };
 
-// --- COMPONENTE: PANEL DE ADMINISTRACIÓN (CON CARGA MASIVA) ---
+// --- COMPONENTE: PANEL DE ADMINISTRACIÓN ---
 const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -314,6 +318,9 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
                       <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="toner Genérico" checked={form.subcategoria === 'toner Genérico'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Tóner Genérico</label>
                       <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="toner Original" checked={form.subcategoria === 'toner Original'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Tóner Original</label>
                       <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="refaccion" checked={form.subcategoria === 'refaccion'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Refacciones</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="papel" checked={form.subcategoria === 'papel'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Papel</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="rollo" checked={form.subcategoria === 'rollo'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Rollos</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="etiqueta" checked={form.subcategoria === 'etiqueta'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Etiquetas</label>
                     </>
                   )}
                 </div>
@@ -435,7 +442,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   );
 };
 
-// --- VISTA CONSUMIBLES (MEJORADA CON FILTROS Y MARCAS) ---
+// --- VISTA CONSUMIBLES ---
 const ConsumiblesView = ({ onBack, catalogo }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('toner Genérico');
@@ -507,12 +514,13 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           <p className="text-slate-600">Encuentra el suministro exacto para tu equipo.</p>
         </div>
 
+        {/* NUEVAS PESTAÑAS AGREGADAS AQUÍ */}
         <div className="flex justify-center flex-wrap gap-3 mb-6">
-          {['toner Genérico', 'toner Original', 'refaccion', 'Todos'].map(tab => (
+          {['toner Genérico', 'toner Original', 'refaccion', 'papel', 'rollo', 'etiqueta', 'Todos'].map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all border ${
+              className={`px-5 py-2 rounded-full font-bold text-sm transition-all border ${
                 activeTab === tab 
                   ? 'bg-cyan-600 text-white border-cyan-600 shadow-lg transform -translate-y-0.5' 
                   : 'bg-white text-slate-600 border-slate-200 hover:border-cyan-400 hover:text-cyan-600'
@@ -520,7 +528,11 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
             >
               {tab === 'toner Genérico' ? 'Tóner Genérico' : 
                tab === 'toner Original' ? 'Tóner Original' : 
-               tab === 'refaccion' ? 'Refacciones y Chips' : 'Ver Todo el Catálogo'}
+               tab === 'refaccion' ? 'Refacciones' : 
+               tab === 'papel' ? 'Papel' : 
+               tab === 'rollo' ? 'Rollos Térmicos' : 
+               tab === 'etiqueta' ? 'Etiquetas' : 
+               'Ver Todo'}
             </button>
           ))}
         </div>
@@ -589,7 +601,6 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           </div>
         )}
 
-        {/* --- NUEVO BANNER DE RESCATE --- */}
         <div className="mt-16 bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-8 md:p-10 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="text-center md:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-800 rounded-full text-cyan-400 text-xs font-bold mb-4 border border-slate-700">
@@ -618,7 +629,7 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
   );
 };
 
-// --- VISTA RENTA Y VENTA (DIVIDIDA POR SUBCATEGORÍAS) ---
+// --- VISTA RENTA Y VENTA ---
 const RentaView = ({ onBack, catalogo }) => {
   const listaCompleta = catalogo || [];
   
@@ -804,11 +815,10 @@ const PromoRollosBanner = () => {
   );
 };
 
-// --- COMPONENTE: VISTA HOME (COMPLETO) ---
+// --- COMPONENTE: VISTA HOME ---
 const HomeView = ({ onNavigate }) => {
   return (
     <>
-      {/* HERO SECTION */}
       <section id="inicio" className="relative pt-40 pb-20 lg:pt-56 lg:pb-32 overflow-hidden">
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-cyan-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
         <div className="absolute top-0 left-0 -ml-20 -mt-20 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
@@ -836,7 +846,6 @@ const HomeView = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* MAIN SERVICES */}
       <section id="servicios" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -877,10 +886,8 @@ const HomeView = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* BANNER PROMOCIONAL - ROLLOS AHORA VISIBLE AQUÍ */}
       <PromoRollosBanner />
 
-      {/* SEGMENTATION SECTION */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -950,7 +957,6 @@ const SuministrosHega = () => {
   return (
     <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
       
-      {/* MODO ADMINISTRADOR */}
       {showAdmin && (
         <AdminPanel 
           catalogo={catalogo} 
@@ -959,7 +965,6 @@ const SuministrosHega = () => {
         />
       )}
 
-      {/* --- NAVBAR --- */}
       <nav className="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-28">
@@ -999,7 +1004,6 @@ const SuministrosHega = () => {
         )}
       </nav>
 
-      {/* --- VISTAS --- */}
       {currentView === 'home' && <HomeView onNavigate={navigateTo} />}
       
       {currentView === 'renta' && (
@@ -1016,11 +1020,9 @@ const SuministrosHega = () => {
         />
       )}
 
-      {/* --- FOOTER --- */}
       <footer id="contacto" className="bg-slate-900 text-white pt-20 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 mb-16">
-             {/* ... Datos de contacto ... */}
              <div>
               <h2 className="text-3xl font-bold mb-6">Contáctanos</h2>
               <p className="text-slate-400 mb-8 max-w-md">Estamos listos para atenderte en nuestras sucursales o vía digital.</p>
@@ -1046,7 +1048,6 @@ const SuministrosHega = () => {
               </div>
             </div>
              
-             {/* ... Formulario ... */}
              <div className="bg-white rounded-2xl p-8 text-slate-900 shadow-2xl shadow-black/20">
               <h3 className="text-2xl font-bold mb-6">Envíanos un mensaje</h3>
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -1066,7 +1067,6 @@ const SuministrosHega = () => {
             <div className="flex space-x-6 mt-4 md:mt-0 items-center">
                <a href="https://www.facebook.com/HEGAsuministros" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Facebook size={20} /> HEGAsuministros</a>
                <a href="https://www.instagram.com/suministroshega" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 group cursor-pointer text-slate-400 hover:text-white transition-colors"><Instagram size={20} /> @suministroshega</a>
-               {/* BOTÓN STAFF VISIBLE */}
                <button onClick={() => setShowAdmin(true)} className="ml-4 text-slate-500 hover:text-cyan-400 transition-colors flex items-center gap-1 text-xs font-bold cursor-pointer" title="Acceso Administrativo">
                  <Lock size={14} /> Staff
                </button>
