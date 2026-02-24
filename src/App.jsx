@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Printer, Droplet, Wrench, ChevronRight, CheckCircle, Phone, Mail, MapPin, MessageCircle, Facebook, Instagram, ArrowLeft, Box, ShieldCheck, Zap, FileText, Layers, Info, Lock, Edit, Trash, Plus, Save, Copy, Image as ImageIcon, Tag, Percent, Cpu, Search, ArrowRight, ScrollText, UploadCloud, FileJson } from 'lucide-react';
 
-// IMPORTAMOS LA BASE DE DATOS DESDE NUESTRO NUEVO ARCHIVO
+// IMPORTAMOS LA BASE DE DATOS DESDE NUESTROS NUEVOS ARCHIVOS
 import { IMPRESORAS } from './data/impresoras';
 import { CONSUMIBLES } from './data/consumibles';
 
@@ -611,6 +611,30 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           </div>
         )}
 
+        {/* --- NUEVO BANNER DE RESCATE --- */}
+        <div className="mt-16 bg-gradient-to-r from-slate-900 to-slate-800 rounded-3xl p-8 md:p-10 shadow-xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="text-center md:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-800 rounded-full text-cyan-400 text-xs font-bold mb-4 border border-slate-700">
+              <Info size={14} /> CATÁLOGO EXTENDIDO
+            </div>
+            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+              ¿No encuentras tu modelo?
+            </h3>
+            <p className="text-slate-400 text-lg max-w-2xl">
+              Contamos con más de 500 modelos en tienda. Mándanos un mensaje y nosotros te conseguimos el tóner, tinta o refacción que necesitas al mejor precio.
+            </p>
+          </div>
+          <a 
+            href={`https://wa.me/524432796023?text=${encodeURIComponent("Hola Suministros Hega, busco un modelo de consumible/refacción que no veo en su página. ¿Me podrían ayudar a cotizarlo?")}`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex-shrink-0 bg-[#25D366] hover:bg-green-500 text-slate-900 px-8 py-4 rounded-xl font-extrabold transition-all shadow-lg flex items-center gap-3 w-full md:w-auto justify-center"
+          >
+            <MessageCircle size={24} />
+            Preguntar por WhatsApp
+          </a>
+        </div>
+
       </div>
     </section>
   );
@@ -1014,7 +1038,7 @@ const SuministrosHega = () => {
       
       {currentView === 'consumibles' && (
         <ConsumiblesView 
-          catalogo={catalogo} // PASAMOS EL CATÁLOGO
+          catalogo={catalogo} 
           onBack={() => navigateTo('home')} 
         />
       )}
