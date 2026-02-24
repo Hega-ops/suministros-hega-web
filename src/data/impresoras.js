@@ -1,36 +1,66 @@
-// Archivo: src/data/impresoras.js
-
 export const IMPRESORAS = [
   {
-    id: 1,
+    id: 101,
     categoria: "renta",
     subcategoria: "bn",
     paquete: "Paquete Básico",
-    modelo: "Ecosys M2040",
+    modelo: "Ecosys M2135dn",
     marca: "Kyocera",
-    descripcion: "3,000 Impresiones B/N",
-    precio: "$1,245",
-    velocidad: "42 ppm",
+    descripcion: "1,500 Impresiones",
+    precio: "$1,000",
+    velocidad: "37 ppm",
     tamano: "Carta y Oficio",
     funciones: "Copia, imprime, escanea",
-    incluye: "Tóner, consumibles y refacciones incluidos.",
+    incluye: "Tóner y consumibles incluidos",
     popular: true,
-    imagen: ""
+    imagen: "/m2135dn.jpg"
   },
   {
-    id: 2,
+    id: 102,
     categoria: "renta",
     subcategoria: "bn",
     paquete: "Paquete Oficina",
-    modelo: "Ecosys M3145",
-    marca: "Kyocera",
-    descripcion: "5,000 Impresiones B/N",
-    precio: "$1,550",
-    velocidad: "45 ppm",
+    modelo: "DCP-L5660DN",
+    marca: "Brother",
+    descripcion: "3,000 Impresiones",
+    precio: "$1,250",
+    velocidad: "42 ppm",
     tamano: "Carta y Oficio",
-    funciones: "Full Dúplex, Red, USB",
-    incluye: "Servicio correctivo en < 24hrs.",
+    funciones: "Copia, imprime, escanea",
+    incluye: "Tóner y consumibles incluidos",
+    popular: true,
+    imagen: "/l5660dn.jpg"
+  },
+  {
+    id: 103,
+    categoria: "renta",
+    subcategoria: "color",
+    paquete: "Paquete Básico",
+    modelo: "TASKalfa 356ci",
+    marca: "Kyocera",
+    descripcion: "500 Impresiones Color",
+    precio: "$1,950",
+    velocidad: "35 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Copia, imprime, escanea",
+    incluye: "Tóner y consumibles incluidos",
     popular: false,
-    imagen: ""
+    imagen: "/356ci.jpg"
+  },
+  {
+    id: 104,
+    categoria: "venta",
+    subcategoria: "usado", // Nota: Lo cambié de 'bn' a 'usado' para que tome el color del diseño de venta (nuevo/usado/remate)
+    paquete: "Para Empezar",
+    modelo: "ProXpress SL-M4080",
+    marca: "Samsung",
+    descripcion: "Contador Bajo",
+    precio: "$5,800",
+    velocidad: "40 ppm",
+    tamano: "Carta y Oficio",
+    funciones: "Copia, imprime, escanea",
+    incluye: "Garantía de equipo",
+    popular: false,
+    imagen: "/m4080.png"
   }
 ];
