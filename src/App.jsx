@@ -803,7 +803,6 @@ const ServicioTecnicoView = ({ onBack }) => {
           </div>
           <div className="relative">
             <div className="bg-white p-4 rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
-               {/* ACTUALIZACIÓN: Ruta de imagen corregida a /tecnico.png */}
                <img 
                 src="/tecnico.png" 
                 alt="Técnico Suministros Hega" 
@@ -1063,6 +1062,20 @@ const SuministrosHega = () => {
     const text = `Hola Suministros Hega, mi nombre es *${nombre}*.%0A%0AMe interesa: *${servicio}*%0A${telefono ? `Mi teléfono es: ${telefono}%0A` : ''}${mensaje ? `Mensaje: ${mensaje}` : ''}`;
     window.open(`https://wa.me/${whatsappNumber}?text=${text}`, '_blank');
   };
+
+  // --- NUEVO EFECTO MKT SH ---
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const view = params.get('seccion'); // Buscamos el parámetro ?seccion=
+    
+    if (view) {
+      const vistasValidas = ['home', 'renta', 'consumibles', 'servicio-tecnico'];
+      if (vistasValidas.includes(view)) {
+        setCurrentView(view);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  }, []);
 
   return (
     <div className="font-montserrat text-slate-800 bg-gray-50 antialiased selection:bg-cyan-200">
