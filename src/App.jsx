@@ -112,7 +112,7 @@ const CompactProductCard = ({ item }) => {
           {item.imagen ? (
              <img src={item.imagen} alt={item.modelo} className="w-full h-full object-contain" onError={(e) => {e.target.onerror = null; e.target.src=""}} />
            ) : (
-             item.subcategoria === 'toner' ? <Droplet size={32} className="text-slate-300" /> : <Box size={32} className="text-slate-300" />
+             item.subcategoria?.includes('toner') ? <Droplet size={32} className="text-slate-300" /> : <Box size={32} className="text-slate-300" />
            )}
         </div>
         
@@ -291,12 +291,12 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
                     <span className="font-bold text-green-600 text-sm">Venta</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer p-2 border rounded-lg hover:bg-slate-50 flex-1">
-                    <input type="radio" name="categoria" value="consumible" checked={form.categoria === 'consumible'} onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'toner'})} />
+                    <input type="radio" name="categoria" value="consumible" checked={form.categoria === 'consumible'} onChange={e => setForm({...form, categoria: e.target.value, subcategoria: 'toner Genérico'})} />
                     <span className="font-bold text-blue-600 text-sm">Consumible</span>
                   </label>
                 </div>
 
-                {/* SUBCATEGORÍA DINÁMICA */}
+                {/* SUBCATEGORÍA DINÁMICA ACTUALIZADA */}
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo / Subcategoría</label>
                 <div className="flex gap-2 flex-wrap">
                   {form.categoria === 'renta' && (
@@ -314,9 +314,9 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
                   )}
                   {form.categoria === 'consumible' && (
                     <>
-                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="toner" checked={form.subcategoria === 'toner'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Tóner/Tinta</label>
-                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="refaccion" checked={form.subcategoria === 'refaccion'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Refacción</label>
-                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="chip" checked={form.subcategoria === 'chip'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Chip/Tambor</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="toner Genérico" checked={form.subcategoria === 'toner Genérico'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Tóner Genérico</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="toner Original" checked={form.subcategoria === 'toner Original'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Tóner Original</label>
+                      <label className="flex items-center gap-1 cursor-pointer px-3 py-1 bg-blue-50 rounded text-sm"><input type="radio" name="subcategoria" value="refaccion" checked={form.subcategoria === 'refaccion'} onChange={e => setForm({...form, subcategoria: e.target.value})} /> Refacciones</label>
                     </>
                   )}
                 </div>
@@ -326,7 +326,7 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Imagen (Nombre archivo)</label>
                 <div className="flex gap-2">
                   <div className="bg-slate-100 p-2 rounded text-slate-500"><ImageIcon size={20}/></div>
-                  <input type="text" placeholder="Ej. /toner-1060.png" className="flex-1 border p-2 rounded text-sm" value={form.imagen} onChange={e => setForm({...form, imagen: e.target.value})} />
+                  <input type="text" placeholder="Ej. /toner-1060.jpg" className="flex-1 border p-2 rounded text-sm" value={form.imagen} onChange={e => setForm({...form, imagen: e.target.value})} />
                 </div>
               </div>
 
@@ -441,24 +441,53 @@ const AdminPanel = ({ catalogo, setCatalogo, onExit }) => {
   );
 };
 
-// --- VISTA CONSUMIBLES (OPTIMIZADA PARA 1000 ITEMS) ---
+// --- VISTA CONSUMIBLES (MEJORADA CON FILTROS Y MARCAS) ---
 const ConsumiblesView = ({ onBack, catalogo }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('toner Genérico'); // Pestaña por defecto
+  const [activeBrand, setActiveBrand] = useState('Todos');      // Marca por defecto
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  // Filtrar solo consumibles
+  // 1. Filtrar TODOS los consumibles
   const consumiblesTodos = (catalogo || []).filter(e => e.categoria === 'consumible');
 
-  // Filtrar por búsqueda
-  const filteredItems = consumiblesTodos.filter(item => 
+  // 2. Filtrar por PESTAÑA (Subcategoría)
+  const porPestana = consumiblesTodos.filter(item => {
+    if (activeTab === 'Todos') return true;
+    return item.subcategoria && item.subcategoria.toLowerCase() === activeTab.toLowerCase();
+  });
+
+  // 3. Extraer las MARCAS dinámicamente de lo que hay en la pestaña actual
+  const marcasDisponibles = ['Todos', ...new Set(porPestana.map(item => item.marca))].filter(Boolean);
+
+  // 4. Filtrar por MARCA
+  const porMarca = porPestana.filter(item => {
+    if (activeBrand === 'Todos') return true;
+    return item.marca && item.marca.toLowerCase() === activeBrand.toLowerCase();
+  });
+
+  // 5. Filtrar por BÚSQUEDA TEXTUAL
+  const filteredItems = porMarca.filter(item => 
     item.modelo.toLowerCase().includes(searchTerm.toLowerCase()) || 
     item.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (item.tamano && item.tamano.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // Lógica de Paginación
+  // --- EFECTOS ---
+  // Si cambia la pestaña, la marca se resetea a 'Todos' y vamos a la página 1
+  useEffect(() => {
+    setActiveBrand('Todos');
+    setCurrentPage(1);
+  }, [activeTab]);
+
+  // Si buscamos o cambiamos de marca, volvemos a la página 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, activeBrand]);
+
+  // --- PAGINACIÓN ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
@@ -466,11 +495,6 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
 
   const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
-
-  // Reiniciar página al buscar
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm]);
 
   return (
     <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
@@ -495,10 +519,49 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           </div>
         </div>
         
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <h1 className="text-3xl font-bold text-slate-900 mb-2">Consumibles y Refacciones</h1>
-          <p className="text-slate-600">Catálogo completo de suministros.</p>
+          <p className="text-slate-600">Encuentra el suministro exacto para tu equipo.</p>
         </div>
+
+        {/* --- PESTAÑAS DE CATEGORÍA --- */}
+        <div className="flex justify-center flex-wrap gap-3 mb-6">
+          {['toner Genérico', 'toner Original', 'refaccion', 'Todos'].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all border ${
+                activeTab === tab 
+                  ? 'bg-cyan-600 text-white border-cyan-600 shadow-lg transform -translate-y-0.5' 
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-cyan-400 hover:text-cyan-600'
+              }`}
+            >
+              {tab === 'toner Genérico' ? 'Tóner Genérico' : 
+               tab === 'toner Original' ? 'Tóner Original' : 
+               tab === 'refaccion' ? 'Refacciones y Chips' : 'Ver Todo el Catálogo'}
+            </button>
+          ))}
+        </div>
+
+        {/* --- FILTRO DE MARCAS (PÍLDORAS) --- */}
+        {/* Solo mostramos el menú de marcas si hay más de 1 marca disponible */}
+        {marcasDisponibles.length > 1 && (
+          <div className="flex justify-center flex-wrap gap-2 mb-10 bg-white p-2 rounded-2xl shadow-sm border border-slate-100 max-w-fit mx-auto">
+            {marcasDisponibles.map(marca => (
+              <button
+                key={marca}
+                onClick={() => setActiveBrand(marca)}
+                className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  activeBrand === marca 
+                    ? 'bg-slate-800 text-white shadow-md' 
+                    : 'bg-transparent text-slate-500 hover:bg-slate-100'
+                }`}
+              >
+                {marca === 'Todos' ? 'Todas las marcas' : marca}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* GRID DE PRODUCTOS COMPACTOS */}
         {currentItems.length > 0 ? (
@@ -534,8 +597,17 @@ const ConsumiblesView = ({ onBack, catalogo }) => {
           </>
         ) : (
           <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
-            <p className="text-slate-500 text-lg">No encontramos productos que coincidan con "{searchTerm}"</p>
-            <button onClick={() => setSearchTerm('')} className="mt-4 text-cyan-600 font-bold hover:underline">Ver todos los productos</button>
+            <p className="text-slate-500 text-lg mb-2">No encontramos productos con estos filtros.</p>
+            <button 
+              onClick={() => {
+                setSearchTerm('');
+                setActiveTab('Todos');
+                setActiveBrand('Todos');
+              }} 
+              className="mt-4 bg-cyan-50 text-cyan-700 px-6 py-2 rounded-lg font-bold hover:bg-cyan-100 transition-colors"
+            >
+              Limpiar Filtros
+            </button>
           </div>
         )}
 
@@ -810,9 +882,6 @@ const HomeView = ({ onNavigate }) => {
           </div>
         </div>
       </section>
-
-      {/* BANNER PROMOCIONAL - ROLLOS */}
-      <PromoRollosBanner />
 
       {/* SEGMENTATION SECTION */}
       <section className="py-20 bg-slate-50">
