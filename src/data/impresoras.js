@@ -61,6 +61,6 @@ export const IMPRESORAS = [
     funciones: "Copia, imprime, escanea",
     incluye: "Garantía de equipo",
     popular: false,
-    imagen: "/m4080.png"
+    imagen: "/m4080.jpg"
   }
 ];
