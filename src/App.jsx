@@ -803,10 +803,15 @@ const ServicioTecnicoView = ({ onBack }) => {
           </div>
           <div className="relative">
             <div className="bg-white p-4 rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+               {/* ACTUALIZACIÓN: Ruta de imagen corregida a /tecnico.png */}
                <img 
-                src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800" 
-                alt="Técnico reparando impresora" 
+                src="/tecnico.png" 
+                alt="Técnico Suministros Hega" 
                 className="rounded-2xl w-full h-80 object-cover"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800";
+                }}
                />
             </div>
             <div className="absolute -bottom-6 -left-6 bg-slate-900 text-white p-6 rounded-2xl shadow-xl hidden md:block">
