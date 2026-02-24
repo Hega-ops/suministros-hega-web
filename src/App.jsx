@@ -751,6 +751,111 @@ const RentaView = ({ onBack, catalogo }) => {
   );
 };
 
+// --- VISTA SERVICIO TÉCNICO ---
+const ServicioTecnicoView = ({ onBack }) => {
+  const whatsappNumber = "524432796023";
+  const mensajeUrgente = encodeURIComponent("¡Hola! Necesito un *Técnico Urgente* para mi equipo de impresión. ¿Me podrían apoyar?");
+
+  const servicios = [
+    {
+      title: "Diagnóstico Especializado",
+      desc: "Identificamos la falla exacta de tu equipo mediante pruebas de sistema y revisión de componentes internos.",
+      icon: <Search className="text-cyan-500" size={32} />,
+      puntos: ["Revisión de códigos de error", "Evaluación de vida útil", "Presupuesto sin compromiso"]
+    },
+    {
+      title: "Mantenimiento Preventivo",
+      desc: "Evita paros innecesarios. Limpieza profunda, lubricación y ajuste de mecanismos para alargar la vida de tu impresora.",
+      icon: <ShieldCheck className="text-green-500" size={32} />,
+      puntos: ["Limpieza de depósitos", "Ajuste de rodillos", "Actualización de Firmware"]
+    },
+    {
+      title: "Reparación Correctiva",
+      desc: "Sustitución de refacciones dañadas y reparación de tarjetas lógicas. Devolvemos la calidad de impresión original.",
+      icon: <Wrench className="text-pink-500" size={32} />,
+      puntos: ["Cambio de fusores", "Reparación de escáner", "Sustitución de engranes"]
+    }
+  ];
+
+  return (
+    <section className="pt-40 pb-20 bg-slate-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <button onClick={onBack} className="flex items-center text-slate-500 hover:text-cyan-600 font-bold mb-8 transition-colors">
+          <ArrowLeft size={20} className="mr-2" /> Volver al Inicio
+        </button>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+          <div>
+            <div className="inline-block px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs font-bold mb-4 tracking-widest uppercase">
+              Soporte Profesional
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+              Servicio Técnico <span className="text-pink-600">Especializado</span>
+            </h1>
+            <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+              No dejes que una falla detenga tu productividad. En <strong>Suministros Hega</strong> contamos con técnicos certificados en las principales marcas del mercado (HP, Brother, Kyocera, Epson).
+            </p>
+            <div className="flex flex-wrap gap-4">
+               <a href={`https://wa.me/${whatsappNumber}?text=${mensajeUrgente}`} target="_blank" rel="noopener noreferrer" className="bg-pink-600 hover:bg-pink-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg shadow-pink-200 transition-all flex items-center gap-2">
+                 Solicitar Técnico Urgente <Zap size={18} />
+               </a>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="bg-white p-4 rounded-3xl shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+               <img 
+                src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800" 
+                alt="Técnico reparando impresora" 
+                className="rounded-2xl w-full h-80 object-cover"
+               />
+            </div>
+            <div className="absolute -bottom-6 -left-6 bg-slate-900 text-white p-6 rounded-2xl shadow-xl hidden md:block">
+               <p className="text-3xl font-bold">100%</p>
+               <p className="text-xs text-slate-400 uppercase tracking-tighter">Garantía en mano de obra</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 mb-20">
+          {servicios.map((s, i) => (
+            <div key={i} className="bg-white p-8 rounded-3xl border border-slate-100 hover:shadow-xl transition-all group">
+              <div className="mb-6 transform group-hover:scale-110 transition-transform">{s.icon}</div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">{s.title}</h3>
+              <p className="text-slate-500 text-sm mb-6 leading-relaxed">{s.desc}</p>
+              <ul className="space-y-2">
+                {s.puntos.map((p, idx) => (
+                  <li key={idx} className="flex items-center text-xs font-bold text-slate-700">
+                    <CheckCircle size={14} className="text-cyan-500 mr-2" /> {p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA FINAL */}
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-[2rem] p-8 md:p-16 text-center relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full opacity-10">
+            <div className="absolute top-10 left-10"><Wrench size={100} /></div>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 relative z-10">¿Tu equipo necesita atención inmediata?</h2>
+          <p className="text-slate-300 mb-10 max-w-2xl mx-auto relative z-10 text-lg">
+            Agenda hoy mismo tu mantenimiento preventivo y evita reparaciones costosas a futuro. Atendemos empresas, escuelas y particulares.
+          </p>
+          <a 
+            href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Hola Hega, quiero agendar un mantenimiento para mi equipo.")}`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 bg-cyan-500 hover:bg-cyan-400 text-white px-10 py-5 rounded-2xl font-extrabold text-xl transition-all hover:scale-105 shadow-xl shadow-cyan-900/20"
+          >
+            👉 Agenda tu mantenimiento
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 // --- COMPONENTE: BANNER PROMOCIONAL ROLLOS ---
 const PromoRollosBanner = () => {
   const mensajeRollos = "Hola, me interesa cotizar rollos para miniprinter.";
@@ -873,7 +978,7 @@ const HomeView = ({ onNavigate }) => {
                 <li className="flex items-center text-sm text-slate-300"><div className="w-1.5 h-1.5 bg-cyan-400 rounded-full mr-2"></div>Equipos multifuncionales</li>
               </ul>
             </div>
-            <div className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+            <div onClick={() => onNavigate('servicio-tecnico')} className="group bg-gray-50 rounded-2xl p-8 transition-all hover:bg-white hover:shadow-xl hover:-translate-y-1 border border-gray-100 cursor-pointer">
               <div className="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"><Wrench className="text-pink-600" size={28} /></div>
               <h3 className="text-xl font-bold text-slate-900 mb-3">Servicio Técnico</h3>
               <p className="text-slate-600 mb-6 text-sm leading-relaxed">Mantenimiento preventivo y correctivo. Revivimos tus equipos y extendemos su vida útil.</p>
@@ -908,11 +1013,11 @@ const HomeView = ({ onNavigate }) => {
               <p className="text-slate-600 mb-6">¿Tu impresora imprime rayas o te quedaste sin tinta a mitad de un trabajo? Tenemos la solución rápida y económica.</p>
               <div className="space-y-4">
                 <div onClick={() => onNavigate('consumibles')} className="flex items-center p-4 bg-white rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-shadow">
-                  <Droplet className="text-cyan-500 mr-4" size={24}/>
+                  <div className="w-10 h-10 bg-cyan-100 rounded-lg flex items-center justify-center mr-4"><Droplet className="text-cyan-500" size={24}/></div>
                   <div><h4 className="font-bold text-slate-800">Venta de Tóner y Tinta</h4><p className="text-sm text-slate-500">Precios competitivos en originales y genéricos.</p></div>
                 </div>
-                <div className="flex items-center p-4 bg-white rounded-xl shadow-sm">
-                  <Wrench className="text-pink-500 mr-4" size={24}/>
+                <div onClick={() => onNavigate('servicio-tecnico')} className="flex items-center p-4 bg-white rounded-xl shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                  <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mr-4"><Wrench className="text-pink-500" size={24}/></div>
                   <div><h4 className="font-bold text-slate-800">Reparación Express</h4><p className="text-sm text-slate-500">Diagnóstico rápido para equipos domésticos.</p></div>
                 </div>
               </div>
@@ -976,10 +1081,11 @@ const SuministrosHega = () => {
               </div>
             </div>
 
-            <div className="hidden md:flex items-center space-x-8">
+            <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
               <button onClick={() => navigateTo('home')} className={`text-sm font-medium transition-colors ${currentView === 'home' ? 'text-cyan-600 font-bold' : 'hover:text-cyan-600'}`}>Inicio</button>
               <button onClick={() => navigateTo('renta')} className={`text-sm font-medium transition-colors ${currentView === 'renta' ? 'text-cyan-600 font-bold' : 'hover:text-cyan-600'}`}>Renta y Venta</button>
               <button onClick={() => navigateTo('consumibles')} className={`text-sm font-medium transition-colors ${currentView === 'consumibles' ? 'text-cyan-600 font-bold' : 'hover:text-cyan-600'}`}>Consumibles</button>
+              <button onClick={() => navigateTo('servicio-tecnico')} className={`text-sm font-medium transition-colors ${currentView === 'servicio-tecnico' ? 'text-pink-600 font-bold' : 'hover:text-pink-600'}`}>Soporte Técnico</button>
               <a href={whatsappLinkGenerico} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-slate-900 to-slate-800 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
                 <MessageCircle size={16} /> Cotizar
               </a>
@@ -999,6 +1105,7 @@ const SuministrosHega = () => {
               <button onClick={() => navigateTo('home')} className="block w-full text-left px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Inicio</button>
               <button onClick={() => navigateTo('renta')} className="block w-full text-left px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Renta y Venta</button>
               <button onClick={() => navigateTo('consumibles')} className="block w-full text-left px-3 py-3 text-base font-medium hover:bg-cyan-50 text-slate-800 rounded-lg">Consumibles</button>
+              <button onClick={() => navigateTo('servicio-tecnico')} className="block w-full text-left px-3 py-3 text-base font-medium hover:bg-pink-50 text-pink-600 rounded-lg">Soporte Técnico</button>
             </div>
           </div>
         )}
@@ -1016,6 +1123,12 @@ const SuministrosHega = () => {
       {currentView === 'consumibles' && (
         <ConsumiblesView 
           catalogo={catalogo} 
+          onBack={() => navigateTo('home')} 
+        />
+      )}
+
+      {currentView === 'servicio-tecnico' && (
+        <ServicioTecnicoView 
           onBack={() => navigateTo('home')} 
         />
       )}
